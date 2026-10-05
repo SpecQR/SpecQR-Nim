@@ -1,0 +1,78 @@
+name: Nim Linux CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash --noprofile --norc -e -o pipefail {0}
+jobs:
+  linux:
+    name: Linux x86-64 / Nim ${{ matrix.nim }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        nim: ['2.2.0', '2.2.12']
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONUTF8: '1'
+      LC_ALL: C.UTF-8
+      TZ: UTC
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Initialize paths outside checkout
+        run: |
+          printf '%s\n' "CI_EVIDENCE=$RUNNER_TEMP/specqr-evidence" "CI_TOOLS=$RUNNER_TEMP/specqr-tools" "CI_STAGE=$RUNNER_TEMP/specqr-source" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/specqr-evidence" "$RUNNER_TEMP/specqr-tools"
+          git rev-parse HEAD > "$RUNNER_TEMP/specqr-evidence/commit.txt"
+          uname -a > "$RUNNER_TEMP/specqr-evidence/host.txt"
+          python3 --version >> "$RUNNER_TEMP/specqr-evidence/host.txt"
+          gcc --version >> "$RUNNER_TEMP/specqr-evidence/host.txt"
+      - name: Verify source manifest and stage source
+        run: python3 scripts/prepare_ci.py stage --output "$CI_STAGE" | tee "$CI_EVIDENCE/stage.json"
+      - name: Install checksum-pinned official Nim
+        run: python3 "$CI_STAGE/scripts/install_nim.py" --version '${{ matrix.nim }}' --tools "$CI_TOOLS" | tee "$CI_EVIDENCE/toolchain.json"
+      - name: Native debug and release / ARC and ORC verification
+        run: |
+          python3 "$CI_STAGE/scripts/verify_native.py" --nim "$CI_TOOLS/nim-${{ matrix.nim }}/bin/nim" --expect-version '${{ matrix.nim }}' --output "$CI_EVIDENCE/native" | tee "$CI_EVIDENCE/native.log"
+      - name: Install independent test-only decoders
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y python3-pip openjdk-17-jdk-headless librsvg2-bin
+          python3 -m pip --isolated install --disable-pip-version-check --no-cache-dir --index-url https://pypi.org/simple --only-binary=:all: --require-hashes --no-deps --target "$CI_TOOLS/python" -r "$CI_STAGE/scripts/requirements-ci.txt"
+          curl --fail --location --retry 3 --proto '=https' --proto-redir '=https' --tlsv1.2 https://repo.maven.apache.org/maven2/com/google/zxing/core/3.5.4/core-3.5.4.jar -o "$CI_TOOLS/core-3.5.4.jar"
+          printf '%s  %s\n' 71de5d89341b5fcf5dd89da7f44e84d825d0e084cdf3ec77c9abe26b0f0ceb13 "$CI_TOOLS/core-3.5.4.jar" | sha256sum --check
+      - name: Actual default-scale PNG and independent decoder checks
+        run: |
+          BIN="$CI_EVIDENCE/native/release-orc/bridge"
+          python3 "$CI_STAGE/scripts/verify_decoders.py" --binary "$BIN" --decoder cpp --scale 8 --python-deps "$CI_TOOLS/python" --output "$CI_EVIDENCE/cpp.json"
+          python3 "$CI_STAGE/scripts/verify_decoders.py" --binary "$BIN" --decoder java --java /usr/lib/jvm/java-17-openjdk-amd64/bin/java --jar "$CI_TOOLS/core-3.5.4.jar" --output "$CI_EVIDENCE/java.json"
+          python3 "$CI_STAGE/scripts/characterize_java_default_scale.py" --binary "$BIN" --java /usr/lib/jvm/java-17-openjdk-amd64/bin/java --jar "$CI_TOOLS/core-3.5.4.jar" --python-deps "$CI_TOOLS/python" --output "$CI_EVIDENCE/java-default8.json"
+          python3 "$CI_STAGE/scripts/verify_render_decoders.py" --binary "$BIN" --rasterizer /usr/bin/rsvg-convert --python-deps "$CI_TOOLS/python" --output "$CI_EVIDENCE/render.json"
+          python3 "$CI_STAGE/scripts/verify_shared_regressions.py" --binary "$BIN" --python-deps "$CI_TOOLS/python" --output "$CI_EVIDENCE/shared.json"
+      - name: Recheck immutable source
+        if: ${{ !cancelled() }}
+        run: python3 "$CI_STAGE/scripts/prepare_ci.py" verify --root "$CI_STAGE" | tee "$CI_EVIDENCE/source-final.json"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: linux-x86_64-nim-${{ matrix.nim }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          retention-days: 14
+          path: ${{ runner.temp }}/specqr-evidence/
+  required:
+    name: Required Linux checks
+    needs: [linux]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require every compiler lane
+        env:
+          LINUX_RESULT: ${{ needs.linux.result }}
+        run: test "$LINUX_RESULT" = success

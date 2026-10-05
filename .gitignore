@@ -1,0 +1,7 @@
+nimcache/
+.nimble/
+build/
+validation-output/
+__pycache__/
+*.pyc
+*.out

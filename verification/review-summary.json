@@ -1,0 +1,25 @@
+{
+  "status": "independent-runtime-review-passed-after-fixes",
+  "reviewedCompilerConfigurations": [
+    "2.2.12 debug ORC",
+    "2.2.12 release ORC",
+    "2.2.0 release ARC"
+  ],
+  "checks": {
+    "strictUtf8Cases": 165802,
+    "independentOptimizerComparisons": 942,
+    "harnessFailureControls": 24,
+    "largePngSide": 2035
+  },
+  "fixed": [
+    "Uninitialized/nil/cyclic diagnostics now use checked bounded copies",
+    "Malformed merge JSON nodes and ragged moduleAt matrices reject with typed errors",
+    "CLI input uses streaming read at most limit+1 bytes"
+  ],
+  "remainingGates": [
+    "Final immutable-source corpus/build matrix",
+    "External decoder suite",
+    "Exact public commit CI and fresh public consumer"
+  ],
+  "scope": "Independent targeted runtime review; no claim of a complete formal proof."
+}

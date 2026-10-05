@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "files": {
+    "public-reference.jsonl.gz": {
+      "sha256": "f1649de0f2e62c87fa7b369cdd1f99bd7c092b6a1a2fa52e2e0caf5aea136f82",
+      "records": 5610
+    },
+    "internal-reference.jsonl.gz": {
+      "sha256": "140eec7223af96822572f87cf67a80b612619bde250db552c1cad83b603ae67e",
+      "records": 4576
+    }
+  },
+  "nimPortSources": {
+    "referenceCorporaAndRegressionFixtures": {
+      "repository": "https://github.com/SpecQR/SpecQR-Julia",
+      "commit": "ffb95d10cd1c585421cb3a52a43a9e657d000a29",
+      "path": "verification/fixtures",
+      "method": "Copied byte-for-byte; pinned corpus hashes retained"
+    },
+    "strictAuthorityVectors": {
+      "repository": "https://github.com/SpecQR/SpecQR-R",
+      "commit": "678cd1f5c698d367391f8fa3475bba7d1e5871ba",
+      "path": "verification/fixtures/strict-authority-vectors.json",
+      "method": "Copied byte-for-byte"
+    },
+    "scope": "Nim port records the verified immediate public source of these fixtures. It does not independently certify earlier generator history."
+  }
+}
