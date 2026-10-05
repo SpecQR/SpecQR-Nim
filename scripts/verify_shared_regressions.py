@@ -8,6 +8,7 @@ if not __debug__:raise SystemExit("Verification requires Python assertions; do n
 sys.path.insert(0,str(a.python_deps.resolve()))
 import zxingcpp
 from decoder_support import verify_png
+from gs1_contract import load_shared,compare_contract,accepted
 
 def main():
  corpus=PKG/'verification/fixtures/expected-contract-vectors.json'
@@ -38,24 +39,24 @@ def main():
    prefix=next((c['applicationIndicator'] for c in v['controls'] if c['mode']=='fnc1-second'),'').encode()
    assert found is not None and found.valid and found.bytes==prefix+bytes.fromhex(v['expectedPayloadUtf8Hex']);counts['manualSemantics']+=1;counts['decodedPngs']+=1
   assert counts['manualSemantics']==4 and counts['decodedPngs']==48,counts
-  for c in issues['digitalLinkDotLoss']['cases']:
-   if 'elements' in c:
-    q=execute(binary_command(binary),[{'command':'digital-link-build','elements':c['elements'],'linkOptions':c['options']}])[0];assert 'error' not in q,q
-    if 'expectedUri' in c:assert q['value']==c['expectedUri'],q
-    else:
-     assert '/10/.' not in q['value'] and '?10=' in q['value'],q
-     parsed=execute(binary_command(binary),[{'command':'digital-link-parse','url':q['value']}])[0];assert parsed['elements']==c['elements'],parsed
-    counts['digitalLinkOperations']+=1
-   else:
-    for op in ['parse','validate','normalize']:
-     q=execute(binary_command(binary),[{'command':'digital-link-'+op,'url':c['uri']}])[0]
-     if c.get('expectedNormalizedUri'):
-      if op=='normalize':assert q['value']==c['expectedNormalizedUri'],q
-      elif op=='validate':assert q['ok'] and q['result']['elements']==c['expectedElements'],q
-      else:assert q['elements']==c['expectedElements'],q
-     elif op=='validate':assert q['ok'] is False,q
-     else:assert q.get('code')=='INVALID_GS1',q
-     counts['digitalLinkOperations']+=1
+  gs1=load_shared()
+  report['gs1IndependentOracles']=gs1['artifacts']
+  counts.update(authorityOperations=0,authorityPositiveOperations=0,authorityRejectedOperations=0,gs1SharedAccepted=0,gs1SharedRejected=0,gs1SharedOverrides=0)
+  for row in gs1['current']['cases']:
+   override=gs1['residual'].get(row['id'])
+   expected=(override or row)['expected']
+   response=execute(binary_command(binary),[{'command':'gs1-fixture',**row['request']}])[0]
+   assert 'value' in response,(row['id'],response)
+   compare_contract(expected,response['value'],'Shared GS1 '+row['id'])
+   ok=accepted(response['value'])
+   assert ok==accepted(expected),(row['id'],'acceptance changed')
+   counts['gs1SharedAccepted' if ok else 'gs1SharedRejected']+=1
+   counts['gs1SharedOverrides']+=int(override is not None)
+   if row['sourceFixture']=='strict-authority-vectors.json':
+    counts['authorityOperations']+=1
+    counts['authorityPositiveOperations' if ok else 'authorityRejectedOperations']+=1
+    if ok:compare_contract(row['expected'],response['value'],'Current TS authority '+row['id'])
+   else:counts['digitalLinkOperations']+=1
   for dpi,version in [(5e-324,1),(1e-305,1),(1e-304,1),(1e-304,40),(300,1)]:
    for command in [None,'estimate','structured-append']:
     q=execute(binary_command(binary),[{'command':command,'text':'A'*80 if command=='structured-append' else 'A','options':{'printDpi':dpi,'version':version}}])[0]
@@ -65,15 +66,7 @@ def main():
    for command in [None,'estimate','structured-append','capacity']:
     q=execute(binary_command(binary),[{'command':command,'text':'A','options':{'errorCorrectionLevel':name,'version':1}}])[0]
     assert q.get('code')=='INVALID_ECC_LEVEL',q;counts['bridgeEccCases']+=1
-  authority=PKG/'verification/fixtures/strict-authority-vectors.json'
-  strict=json.loads(authority.read_text());report['strictAuthorityFixtureSha256']=digest(authority)
-  counts['strictAuthorityOperations']=0
-  for v in strict['vectors']:
-   for op in ['parse','validate','normalize']:
-    q=execute(binary_command(binary),[{'command':'digital-link-'+op,'url':v['input']}])[0]
-    if op=='validate':assert q.get('ok') is False,(v['id'],op,q)
-    else:assert q.get('code')=='INVALID_GS1',(v['id'],op,q)
-    counts['strictAuthorityOperations']+=1
+  assert counts=={'percentVectors':102,'successfulPercentVectors':44,'decodedPngs':48,'forcedAlphaRejections':34,'capacityRejections':24,'manualSemantics':4,'digitalLinkOperations':28,'printDpiCases':15,'bridgeEccCases':20,'authorityOperations':21,'authorityPositiveOperations':18,'authorityRejectedOperations':3,'gs1SharedAccepted':25,'gs1SharedRejected':24,'gs1SharedOverrides':3},('Exact regression cardinality changed',counts)
   finish_clients(report)
   assert snapshot()==report['sourceSha256'],'Source changed during verification'
   report['status']='passed'

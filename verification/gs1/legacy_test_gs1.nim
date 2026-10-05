@@ -221,79 +221,35 @@ suite "Digital Link strict offline authority profile":
       check parseGs1DigitalLink("https://" & host & "/01/" & gtin).primary == primary
     check normalizeGs1DigitalLink("HTTP://LOCALHOST:080/01/" & gtin) == "http://localhost/01/" & gtin
     check validateGs1DigitalLink("http://localhost/01/" & gtin)["warnings"][0]["code"].getStr == "GS1_DIGITAL_LINK_HTTP"
-  test "numeric URL aliases normalize exactly and malformed aliases reject":
-    for pair in [("0x", "0.0.0.0"), ("0X", "0.0.0.0"), ("1.0x", "1.0.0.0"),
-                 ("0x.", "0.0.0.0"), ("1.0X", "1.0.0.0"), ("1.2.3.0x", "1.2.3.0"),
-                 ("0x7f000001", "127.0.0.1"), ("0177.0.0.1", "127.0.0.1"),
-                 ("127.1", "127.0.0.1"), ("2130706433", "127.0.0.1"),
-                 ("127.0.0.01", "127.0.0.1"), ("1.2.3.4.", "1.2.3.4")]:
-      let input = "https://" & pair[0] & "/01/" & gtin
-      check parseGs1DigitalLink(input).primary == primary
-      check normalizeGs1DigitalLink(input) == "https://" & pair[1] & "/01/" & gtin
-      check validateGs1DigitalLink(input)["ok"].getBool
-    for host in ["example.0x", "1.2.3.256", "example.123", "example.0xff",
-                 "4294967296", "0x100000000", "99999999999999999999999999999999999999999",
-                 "1.16777216", "1.2.65536", "256.1", "1.09", "09", "0xg.1"]:
+  test "ambiguous IPv4 aliases include empty hexadecimal digits":
+    for host in ["0x", "0X", "1.0x", "example.0x", "0x.", "1.0X", "1.2.3.0x",
+                 "0x7f000001", "0177.0.0.1", "127.1", "2130706433", "127.0.0.01",
+                 "1.2.3.256", "1.2.3.4.", "example.123", "example.0xff"]:
       let input = "https://" & host & "/01/" & gtin
       expectCode("GS1_DIGITAL_LINK_UNSUPPORTED_HOST"): discard parseGs1DigitalLink(input)
       expectCode("GS1_DIGITAL_LINK_UNSUPPORTED_HOST"): discard normalizeGs1DigitalLink(input)
       check not validateGs1DigitalLink(input)["ok"].getBool
-  test "credentials and ASCII reg-names serialize; unsafe authorities reject":
-    for pair in [("user:password@example.com", "user:password@example.com"),
-                 ("user@example.com", "user@example.com"), ("%65xample.com", "example.com"),
-                 ("a..example", "a..example"), ("-bad.example", "-bad.example"),
-                 ("bad-.example", "bad-.example"), ("bad_name.example", "bad_name.example"),
-                 ("user:p:a@example.com", "user:p%3Aa@example.com"),
-                 ("u@ser:p%40ss@example.com", "u%40ser:p%40ss@example.com"),
-                 ("user:@example.com", "user@example.com"), ("@example.com", "example.com")]:
-      let input = "https://" & pair[0] & "/01/" & gtin
-      check parseGs1DigitalLink(input).primary == primary
-      check normalizeGs1DigitalLink(input) == "https://" & pair[1] & "/01/" & gtin
-      check validateGs1DigitalLink(input)["ok"].getBool
-    for host in ["例.jp", "[::1%25eth0]", "[1:2:3:4:5:6:7]", "[1:2:3:4:5:6:7:8:9]", "[:::]",
-                 "[1::2::3]", "[::ffff:192.000.2.1]", "[1.2.3.4::]", "[::1]oops",
-                 "%2f.example", "%40.example", "%3a.example", "%23.example", "%5c.example"]:
+  test "credentials non-ASCII zones malformed DNS and IPv6 are rejected":
+    for host in ["user:password@example.com", "user@example.com", "例.jp", "%65xample.com",
+                 "a..example", "-bad.example", "bad-.example", "bad_name.example", "",
+                 "[::1%25eth0]", "[1:2:3:4:5:6:7]", "[1:2:3:4:5:6:7:8:9]", "[:::]",
+                 "[1::2::3]", "[::ffff:192.000.2.1]", "[1.2.3.4::]", "[::1]oops"]:
       expectCode("GS1_DIGITAL_LINK_UNSUPPORTED_HOST"):
         discard parseGs1DigitalLink("https://" & host & "/01/" & gtin)
-    expectCode("GS1_INVALID_DIGITAL_LINK_PLACEMENT"):
-      discard parseGs1DigitalLink("https:///01/" & gtin)
-    for host in ["%", "%GG", "%FF", "%00", "user:%FF@example.com", "user:%00@example.com"]:
-      expectCode("GS1_INVALID_PERCENT_ENCODING"):
-        discard parseGs1DigitalLink("https://" & host & "/01/" & gtin)
   test "port range grammar default canonicalization":
-    for port in ["-1", "+443", "65536", "123456", "a", "443:80", "999999999999999999999999999999999999"]:
+    for port in ["", "-1", "+443", "65536", "123456", "a", "443:80"]:
       expectCode("GS1_DIGITAL_LINK_INVALID_URI"):
         discard parseGs1DigitalLink("https://example.com:" & port & "/01/" & gtin)
-    check normalizeGs1DigitalLink("https://example.com:/01/" & gtin) == "https://example.com/01/" & gtin
-    check normalizeGs1DigitalLink("https://example.com:00000000000000443/01/" & gtin) == "https://example.com/01/" & gtin
     check normalizeGs1DigitalLink("https://example.com:00443/01/" & gtin) ==
         "https://example.com/01/" & gtin
     check normalizeGs1DigitalLink("https://example.com:00000/01/" & gtin) ==
         "https://example.com:0/01/" & gtin
     check normalizeGs1DigitalLink("https://example.com:65535/01/" & gtin) ==
         "https://example.com:65535/01/" & gtin
-  test "URL lexical repairs preserve data and nonempty fragments reject":
+  test "fragments invalid schemes raw whitespace and backslashes fail":
     expectCode("GS1_DIGITAL_LINK_FRAGMENT_NOT_ALLOWED"):
       discard parseGs1DigitalLink("https://example.com/01/" & gtin & "#x")
-    for input in ["ftp://example.com/01/" & gtin, "//example.com/01/" & gtin]:
+    for input in ["ftp://example.com/01/" & gtin, "//example.com/01/" & gtin,
+                  "https://example.com\\x/01/" & gtin, " https://example.com/01/" & gtin,
+                  "https://example.com/01/" & gtin & "?x=raw space"]:
       expectCode("GS1_DIGITAL_LINK_INVALID_URI"): discard parseGs1DigitalLink(input)
-    for pair in [("https://example.com\\x/01/", "https://example.com/x/01/"),
-                 (" https://example.com/01/", "https://example.com/01/"),
-                 ("https:example.com/01/", "https://example.com/01/"),
-                 ("https:/example.com/01/", "https://example.com/01/"),
-                 ("https:////example.com/01/", "https://example.com/01/"),
-                 ("\thttps://exa\nmple.com/01/", "https://example.com/01/")]:
-      check normalizeGs1DigitalLink(pair[0] & gtin) == pair[1] & gtin
-    check normalizeGs1DigitalLink("https://example.com/01/" & gtin & "?x=raw space") ==
-      "https://example.com/01/" & gtin & "?x=raw+space"
-    check normalizeGs1DigitalLink("https://example.com/01/" & gtin & "?x=a\\b") ==
-      "https://example.com/01/" & gtin & "?x=a%5Cb"
-    check parseGs1DigitalLink("https://example.com/01/" & gtin & "#").primary == primary
-    check createGs1DigitalLink([primary], baseUrl = "https://example.com?#") == "https://example.com/01/" & gtin & "#"
-    check normalizeGs1DigitalLink("https://[0:0:0:0:0:ffff:192.0.2.1]/01/" & gtin) == "https://[::ffff:c000:201]/01/" & gtin
-    expectCode("GS1_INVALID_PERCENT_ENCODING"):
-      discard parseGs1DigitalLink("https://example.com/01/" & gtin & "?x=\0")
-    check normalizeGs1DigitalLink("https://example.com/context^prefix/01/" & gtin) ==
-      "https://example.com/context%5Eprefix/01/" & gtin
-    check createGs1DigitalLink([primary], baseUrl = "https://example.com/context^prefix") ==
-      "https://example.com/context%5Eprefix/01/" & gtin

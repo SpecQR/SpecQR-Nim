@@ -138,4 +138,36 @@ class AuxiliaryProcessTests(unittest.TestCase):
   row=self.reject(['/this-harness-path-does-not-exist/specqr-control'])
   self.assertIsNone(row['exitCode']);self.assertEqual(row['stdoutBytes'],0)
 
+class GS1OracleContractTests(unittest.TestCase):
+ """Independent current-source positives cannot pass as blanket native errors."""
+ def test_serialization_controls_reject_blanket_errors(self):
+  from gs1_contract import load_serialization,compare_contract
+  rows=load_serialization()['current']['cases'];self.assertEqual(len(rows),394)
+  for row in rows:
+   with self.subTest(case=row['caseId']),self.assertRaises(RuntimeError):compare_contract(row['expected'],{'throws':{'code':'INVALID_GS1','message':'blocked'}})
+ def test_complete_request_bound_oracles(self):
+  from gs1_contract import load_main,load_shared
+  main=load_main();shared=load_shared()
+  self.assertEqual((len(main['current']['cases']),len(main['restored']),len(main['residual'])),(1411,80,168))
+  self.assertEqual((len(shared['current']['cases']),len(shared['residual'])),(49,3))
+ def test_all_restored_positives_reject_blanket_errors(self):
+  from gs1_contract import load_main,compare_contract,accepted
+  for i,row in load_main()['restored'].items():
+   self.assertTrue(accepted(row['expected']))
+   with self.subTest(case=i),self.assertRaises(RuntimeError):compare_contract(row['expected'],{'throws':{'code':'INVALID_GS1','message':'blocked'}})
+ def test_all_authority_alias_positives_reject_blanket_errors(self):
+  from gs1_contract import load_shared,compare_contract,accepted
+  cases=[r for r in load_shared()['current']['cases'] if r['sourceFixture']=='strict-authority-vectors.json' and accepted(r['expected'])]
+  self.assertEqual(len(cases),18)
+  for row in cases:
+   with self.subTest(case=row['id']),self.assertRaises(RuntimeError):compare_contract(row['expected'],{'throws':{'code':'INVALID_GS1','message':'blocked'}})
+ def test_unexpected_public_fields_fail(self):
+  from gs1_contract import compare_contract
+  with self.assertRaises(RuntimeError):compare_contract({'elements':[]},{'elements':[],'unexpected':'payload'})
+ def test_diagnostic_migrations_remain_rejections(self):
+  from gs1_contract import load_main,accepted
+  main=load_main();migrated=[(i,r) for i,r in main['residual'].items() if r.get('diagnosticMigration')]
+  self.assertEqual([i for i,r in migrated],[930,1038,1056,1269,1272])
+  self.assertTrue(all(r['category']=='diagnostic-only' and not accepted(r['expected']) for i,r in migrated))
+
 if __name__=='__main__':unittest.main()

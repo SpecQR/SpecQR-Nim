@@ -33,6 +33,7 @@ type
     unknownQuery*: seq[GS1UnknownQuery]
   GS1Url = object
     scheme, authority, path: string
+    emptyFragment: bool
     query: Option[string]
 
 proc gs1Fail(message: string; code = "GS1_INVALID_INPUT") {.noreturn.} =
@@ -433,66 +434,162 @@ proc ipv6(value: string): bool =
     return a >= 0 and b >= 0 and a + b < 8
   false
 proc hostFail() {.noreturn.} =
-  gs1Fail("Unsupported host profile; use ASCII DNS, canonical dotted IPv4, or RFC IPv6 without credentials", "GS1_DIGITAL_LINK_UNSUPPORTED_HOST")
-proc authority(value, scheme: string): string =
-  if value.len notin 1..1024 or not ascii(value) or '@' in value or '%' in value: hostFail()
+  gs1Fail("Unsupported host profile; use an ASCII URL host or RFC IPv6", "GS1_DIGITAL_LINK_UNSUPPORTED_HOST")
+proc ipv4Number(value: string): int64 =
+  # -1 is non-numeric; 2^32 is an overflow sentinel, never a wrapped value.
+  if value.len == 0: return -1
+  var radix = 10'i64
+  var start = 0
+  if value.len >= 2 and value[0..<2].toLowerAscii == "0x":
+    radix = 16
+    start = 2
+  elif value.len >= 2 and value[0] == '0':
+    radix = 8
+    start = 1
+  for i in start..<value.len:
+    let digit = int64(hexDigit(value[i]))
+    if digit < 0 or digit >= radix: return -1
+    if result < 0x100000000'i64:
+      if result > (0xffffffff'i64 - digit) div radix: result = 0x100000000'i64
+      else: result = result * radix + digit
+proc normalizeIpv4Host(host: string): string =
+  var parts = host.split('.')
+  if parts.len > 1 and parts[^1].len == 0: parts.setLen(parts.len - 1)
+  if not digits(parts[^1]) and ipv4Number(parts[^1]) < 0: return host
+  if parts.len > 4: hostFail()
+  var numbers: seq[int64]
+  for part in parts:
+    let number = ipv4Number(part)
+    if number < 0 or number > 0xffffffff'i64: hostFail()
+    numbers.add number
+  for i in 0..<numbers.high:
+    if numbers[i] > 255: hostFail()
+  if numbers[^1] >= (1'i64 shl (8 * (5 - numbers.len))): hostFail()
+  var address = numbers[^1]
+  for i in 0..<numbers.high: address += numbers[i] shl (8 * (3 - i))
+  $((address shr 24) and 255) & "." & $((address shr 16) and 255) & "." &
+    $((address shr 8) and 255) & "." & $(address and 255)
+proc ipv6Groups(side: string): seq[int] =
+  if side.len == 0: return
+  for part in side.split(':'):
+    if '.' in part:
+      let bytes = part.split('.')
+      result.add (parseInt(bytes[0]) shl 8) or parseInt(bytes[1])
+      result.add (parseInt(bytes[2]) shl 8) or parseInt(bytes[3])
+    else:
+      var number = 0
+      for c in part: number = (number shl 4) or hexDigit(c)
+      result.add number
+proc normalizeIpv6(address: string): string =
+  # Complete IPv6 validation (including embedded IPv4) precedes this routine.
+  let sides = address.split("::")
+  var groups = ipv6Groups(sides[0])
+  if sides.len == 2:
+    let right = ipv6Groups(sides[1])
+    groups.add newSeq[int](8 - groups.len - right.len)
+    groups.add right
+  var bestStart = -1
+  var bestSize = 1
+  var at = 0
+  while at < groups.len:
+    if groups[at] != 0:
+      inc at
+      continue
+    let start = at
+    while at < groups.len and groups[at] == 0: inc at
+    if at - start > bestSize:
+      bestStart = start
+      bestSize = at - start
+  var pieces: seq[string]
+  for group in groups:
+    let piece = strutils.strip(toHex(group, 4).toLowerAscii, leading = true, trailing = false, chars = {'0'})
+    pieces.add (if piece.len == 0: "0" else: piece)
+  if bestStart < 0: return pieces.join(":")
+  pieces[0..<bestStart].join(":") & "::" & pieces[bestStart + bestSize..<pieces.len].join(":")
+proc userinfoEncode(value: string): string =
+  # Existing percent escapes retain their original spelling; raw bytes serialize.
+  for c in value:
+    if ord(c) <= 32 or ord(c) >= 127 or c in {'"', '#', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}'}:
+      result.add '%' & toHex(ord(c), 2)
+    else: result.add c
+proc authority(input, scheme: string): string =
+  if input.len notin 1..1024: hostFail()
+  var value = input
+  var userinfo = ""
+  let atSign = value.rfind('@')
+  if atSign >= 0:
+    let raw = value[0..<atSign]
+    discard decode(raw) # Strict percent/UTF-8/NUL validation without credential disclosure.
+    let colon = raw.find(':')
+    let username = userinfoEncode(if colon < 0: raw else: raw[0..<colon])
+    let password = if colon < 0: "" else: userinfoEncode(raw[colon + 1..<raw.len])
+    if username.len > 0 or password.len > 0:
+      userinfo = username & (if password.len > 0: ":" & password else: "") & "@"
+    value = value[atSign + 1..<value.len]
   var port = none(string)
   if value.startsWith("["):
     let close = value.find(']')
     if close < 0: hostFail()
     let address = value[1..<close]
     if not ipv6(address): hostFail()
-    result = "[" & address.toLowerAscii & "]"
+    result = "[" & normalizeIpv6(address) & "]"
     let tail = value[close + 1..<value.len]
     if tail.len > 0:
       if not tail.startsWith(":"): hostFail()
       port = some(tail[1..<tail.len])
   else:
     let at = value.find(':')
-    result = (if at < 0: value else: value[0..<at]).toLowerAscii
+    result = decode(if at < 0: value else: value[0..<at])
     if at >= 0: port = some(value[at + 1..<value.len])
-    let dns = if result.endsWith("."): result[0..<result.high] else: result
-    if dns.len notin 1..253: hostFail()
-    let labels = dns.split('.')
-    for label in labels:
-      if label.len notin 1..63: hostFail()
-      if label[0] notin {'a'..'z', '0'..'9'} or label[^1] notin {'a'..'z', '0'..'9'}: hostFail()
-      for c in label:
-        if c notin {'a'..'z', '0'..'9', '-'}: hostFail()
-    let tail = labels[^1]
-    var hexNumber = tail.startsWith("0x")
-    if hexNumber:
-      for i in 2..<tail.len:
-        if hexDigit(tail[i]) < 0: hexNumber = false
-    if (digits(tail) or hexNumber) and not ipv4(result): hostFail()
-  if port.isSome:
+    if result.len == 0: hostFail()
+    # No partial IDNA: the standard library has no full UTS46 implementation.
+    # ASCII URL reg-names are not restricted to DNS labels.
+    for c in result:
+      if ord(c) <= 32 or ord(c) >= 127 or c in {'#', '%', '/', ':', '<', '>', '?', '@', '[', '\\', ']', '^', '|'}: hostFail()
+    result = normalizeIpv4Host(result.toLowerAscii)
+  if port.isSome and port.get.len > 0:
     let p = port.get
-    if p.len notin 1..5 or not digits(p):
+    if not digits(p):
       gs1Fail("GS1 port must contain decimal digits from 0 to 65535", "GS1_DIGITAL_LINK_INVALID_URI")
-    let number = parseInt(p)
-    if number > 65535: gs1Fail("GS1 port must be from 0 to 65535", "GS1_DIGITAL_LINK_INVALID_URI")
+    var number = 0
+    for c in p:
+      number = number * 10 + ord(c) - ord('0')
+      if number > 65535: gs1Fail("GS1 port must be from 0 to 65535", "GS1_DIGITAL_LINK_INVALID_URI")
     if not ((scheme == "http" and number == 80) or (scheme == "https" and number == 443)):
       result.add ":" & $number
+  result = userinfo & result
+proc urlSource(value: string): string =
+  if '\0' in value: percentFail()
+  result = strutils.strip(value, chars = {'\x00'..'\x20'})
+  result = result.replace("\t", "").replace("\n", "").replace("\r", "")
+proc urlPath(value: string): string =
+  for c in value:
+    if ord(c) <= 32 or ord(c) >= 127 or c in {'"', '#', '<', '>', '?', '^', '`', '{', '}'}:
+      result.add '%' & toHex(ord(c), 2)
+    else: result.add c
 proc parseUrl(value: string): GS1Url =
-  let s = checkedText(value, "GS1 Digital Link URI")
-  if '#' in s: gs1Fail("GS1 Digital Link URI must not include a fragment", "GS1_DIGITAL_LINK_FRAGMENT_NOT_ALLOWED")
-  for c in s:
-    if c <= ' ' or c == '\x7f' or c == '\\':
-      gs1Fail("GS1 URI must be absolute http or https without whitespace or backslashes", "GS1_DIGITAL_LINK_INVALID_URI")
-  let schemeEnd = s.find("://")
+  var s = urlSource(checkedText(value, "GS1 Digital Link URI"))
+  let fragmentAt = s.find('#')
+  if fragmentAt >= 0:
+    if fragmentAt != s.high:
+      gs1Fail("GS1 Digital Link URI must not include a fragment", "GS1_DIGITAL_LINK_FRAGMENT_NOT_ALLOWED")
+    result.emptyFragment = true
+    s.setLen(fragmentAt)
+  # Only authority/path backslashes are slashes; query backslashes are data.
+  let queryAt = s.find('?')
+  var head = (if queryAt < 0: s else: s[0..<queryAt]).replace('\\', '/')
+  if queryAt >= 0: result.query = some(s[queryAt + 1..<s.len])
+  let schemeEnd = head.find(':')
   if schemeEnd < 0: gs1Fail("GS1 URI must be an absolute http or https URL", "GS1_DIGITAL_LINK_INVALID_URI")
-  result.scheme = s[0..<schemeEnd].toLowerAscii
+  result.scheme = head[0..<schemeEnd].toLowerAscii
   if result.scheme notin ["http", "https"]:
     gs1Fail("GS1 URI must be an absolute http or https URL", "GS1_DIGITAL_LINK_INVALID_URI")
-  let start = schemeEnd + 3
+  var start = schemeEnd + 1
+  while start < head.len and head[start] == '/': inc start
   var stop = start
-  while stop < s.len and s[stop] notin {'/', '?'}: inc stop
-  result.authority = authority(s[start..<stop], result.scheme)
-  let queryAt = s.find('?', stop)
-  if queryAt < 0: result.path = s[stop..<s.len]
-  else:
-    result.path = s[stop..<queryAt]
-    result.query = some(s[queryAt + 1..<s.len])
+  while stop < head.len and head[stop] != '/': inc stop
+  result.authority = authority(head[start..<stop], result.scheme)
+  result.path = urlPath(head[stop..<head.len])
   for part in boundedSplit(result.path, '/', 2 * GS1_MAX_ELEMENTS + 1): discard decode(part)
   if result.query.isSome:
     for pair in boundedSplit(result.query.get, '&', GS1_MAX_ELEMENTS): discard queryPair(pair)
@@ -533,7 +630,7 @@ proc createGs1DigitalLink*(elements: openArray[GS1Element]; baseUrl = "https://i
                           explicitPathAis = false): string =
   checkPrimary(primaryAi)
   let base = parseUrl(baseUrl)
-  if base.query.isSome: gs1Fail("GS1 Digital Link baseUrl must not include query components")
+  if base.query.isSome and base.query.get.len > 0: gs1Fail("GS1 Digital Link baseUrl must not include query components")
   if pathAis.len > GS1_MAX_ELEMENTS: gs1Fail("GS1 element count exceeds limit")
   var paths = initHashSet[string]()
   for ai in pathAis:
@@ -568,6 +665,7 @@ proc createGs1DigitalLink*(elements: openArray[GS1Element]; baseUrl = "https://i
   for e in path: result.add "/" & encode(e.ai) & "/" & encode(e.value)
   for i, e in query:
     result.add (if i == 0: "?" else: "&") & encode(e.ai, true) & "=" & encode(e.value, true)
+  if base.emptyFragment: result.add "#"
   result = checkedText(result, "GS1 Digital Link output")
 proc parseLink(url: GS1Url; primaryAi, unknownQuery: string): GS1DigitalLinkParseResult =
   if primaryAi.len > 0: checkPrimary(primaryAi)

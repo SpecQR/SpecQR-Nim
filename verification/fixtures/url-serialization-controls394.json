@@ -1,0 +1,4681 @@
+{
+  "schemaVersion": 1,
+  "scope": "Independent ASCII URL serialization, numeric IPv4 boundaries and IPv6 zero-run controls",
+  "source": {
+    "repository": "https://github.com/SpecQR/SpecQR",
+    "commit": "16efc6c0a8e397c9df3d051d20fce6c1eebdfad7",
+    "tree": "ca4c2360a7dc0950c1bfd1f76e44616bcd406023",
+    "toolchain": "Node.js v24.19.0",
+    "oracleHarness": "verification/gs1/current_ts_oracle.mjs",
+    "oracleHarnessSha256": "cf4b5b393a909bbae33cee250420d9997cff742fd1607c1746e91e6a4ff02b33",
+    "sourceHashes": {
+      "src/gs1/ai-dictionary.js": "c483742e13e98f08bc461b4223502be9542e7043bc02031af3bb31a3def93099",
+      "src/gs1/ai.js": "482f443c5b485173038ebea945a5c7d524efce87e2cd9c5595361494ceccea95",
+      "src/gs1/check-digit.js": "5a3fafa1ef032d5a2603c094f34563026d577b6b926b7ffefaef36fc00ec93ce",
+      "src/gs1/digital-link.js": "a4ea3059c7fa63fc5c099fa5bc1915e59cbfd8f103fe19120397787c49b5eb7a",
+      "src/gs1/element-string.js": "441beb66197dd872186314a619b3cf8a04ad9956fef70e618a03d0b7bfe835cd",
+      "src/gs1/index.js": "0b3d54b9dc1d1dd0343ba77b8e6c7e7e07bca96353fd42a5c98c8e0052947c8d",
+      "src/gs1/parser.js": "5572e92815a5f3c3bb7aad67fabcfd0b2aa34085d12c7baef0a1cee123bcf9ef",
+      "src/gs1/validation.js": "44e1321ab549f4d050816305b0a201e6d4396418dfe1c9d0de6675d6d6fc1368",
+      "src/gs1/validator.js": "3482cab601f09d9b7dde94198c0f886c843c7d7f4018541388cc388fc993d64a",
+      "src/gs1.js": "8caa34a2eb6acfb24d5c46f8559fbd0a96dc0109d69a1789fbe74203a2290833"
+    },
+    "rawOracleOutputSha256": "deb6ee2d33a956db2b8b66ea9a3460346653cdbefcf6b6d0835a66632efabc21"
+  },
+  "caseCount": 394,
+  "cases": [
+    {
+      "caseId": 0,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context!prefix/01/09506000134352"
+      },
+      "requestSha256": "f5d690a24bcecb09195f935e2a79e7f1f09d433fc5b69f86ca1aa666a131b52f",
+      "expected": "https://example.com/context!prefix/01/09506000134352"
+    },
+    {
+      "caseId": 1,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context!prefix"
+        }
+      },
+      "requestSha256": "3312d6fa477d6f0444e0a26d472d28d33234e206ffe9907555f61e7b5b671106",
+      "expected": "https://example.com/context!prefix/01/09506000134352"
+    },
+    {
+      "caseId": 2,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user!name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "0943a1a7c20f8cb49612ba291fa9677614183c818c4bd569754399598d93dc30",
+      "expected": "https://user!name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 3,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix!suffix"
+      },
+      "requestSha256": "45e43a4ef8c2ccc0c326d7a253cea9da1624917b37a5a5806a470b27bf5470e8",
+      "expected": "https://example.com/01/09506000134352?x=prefix%21suffix"
+    },
+    {
+      "caseId": 4,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context\"prefix/01/09506000134352"
+      },
+      "requestSha256": "08ab1cc4687133743d02fe686913ec2fdee94fb41b7750c79f97da6371170460",
+      "expected": "https://example.com/context%22prefix/01/09506000134352"
+    },
+    {
+      "caseId": 5,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context\"prefix"
+        }
+      },
+      "requestSha256": "7ab20570feb855650beccac2d84b9e6f90f683bdb7c0bc532b29320030e0837d",
+      "expected": "https://example.com/context%22prefix/01/09506000134352"
+    },
+    {
+      "caseId": 6,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user\"name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "1686f70b59c0b725439213d8d251ba24ab469bc842fd4d7fc6864ca89f39242e",
+      "expected": "https://user%22name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 7,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix\"suffix"
+      },
+      "requestSha256": "f2762d827e3a8b0a236b0e16104782fbf56d171ad82ddffda3a9d47e42bb2037",
+      "expected": "https://example.com/01/09506000134352?x=prefix%22suffix"
+    },
+    {
+      "caseId": 8,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context$prefix/01/09506000134352"
+      },
+      "requestSha256": "0172dc3da1014a4a51837ced840d3ac72f9762a8bb269eee0ba17d12240f24f9",
+      "expected": "https://example.com/context$prefix/01/09506000134352"
+    },
+    {
+      "caseId": 9,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context$prefix"
+        }
+      },
+      "requestSha256": "8f624a769fb7a90e98ec8d6db3190ea748817e37e6caafd86b1fe74601feee7f",
+      "expected": "https://example.com/context$prefix/01/09506000134352"
+    },
+    {
+      "caseId": 10,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user$name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "9cc1c48644bedd1df8363a9d85994c9463a3c986994e27b24f898bc80b13ed60",
+      "expected": "https://user$name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 11,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix$suffix"
+      },
+      "requestSha256": "04282c74e14de3714af69f4dfc0c1e2e1aea6f7b738301a79b7dde5948d02905",
+      "expected": "https://example.com/01/09506000134352?x=prefix%24suffix"
+    },
+    {
+      "caseId": 12,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context&prefix/01/09506000134352"
+      },
+      "requestSha256": "73d040f14bc2209ff41fb65ab67d90b703a17aa288fa74d29ff1456b614c99ca",
+      "expected": "https://example.com/context&prefix/01/09506000134352"
+    },
+    {
+      "caseId": 13,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context&prefix"
+        }
+      },
+      "requestSha256": "98d5f7ff3d6db5ec3d69256ad15e9393c4c388cbc6cb2d559c35abce800f4dfc",
+      "expected": "https://example.com/context&prefix/01/09506000134352"
+    },
+    {
+      "caseId": 14,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user&name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "f2820db68beb2ee09abe59d9687d02cfc9ff713299eaa555aa8f189a2b7b7006",
+      "expected": "https://user&name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 15,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix&suffix"
+      },
+      "requestSha256": "3175f7558ce03a8c54f32f857319afcbd7e3e0161d98c70618087c46166f0e4a",
+      "expected": "https://example.com/01/09506000134352?x=prefix&suffix="
+    },
+    {
+      "caseId": 16,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context'prefix/01/09506000134352"
+      },
+      "requestSha256": "000da6d91d642542f88d2dcfcbb9e360dca531deb9c8b2d6fb76c1f6a0c0d6bf",
+      "expected": "https://example.com/context'prefix/01/09506000134352"
+    },
+    {
+      "caseId": 17,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context'prefix"
+        }
+      },
+      "requestSha256": "3941cfcd33f621ecc703e93622efccd0b45bf64c85b89e430a42c58cf97c9958",
+      "expected": "https://example.com/context'prefix/01/09506000134352"
+    },
+    {
+      "caseId": 18,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user'name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "518bb216e7d44cc5e6c41de60988016c7a8d8f019980f4aa16c942a622872c13",
+      "expected": "https://user'name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 19,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix'suffix"
+      },
+      "requestSha256": "ce3e6171804e1855c52f1e2fb49cf3c67a17a78644ce5b7d04ff95792fb5ace1",
+      "expected": "https://example.com/01/09506000134352?x=prefix%27suffix"
+    },
+    {
+      "caseId": 20,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context(prefix/01/09506000134352"
+      },
+      "requestSha256": "c78909d507aab067d64f6edf3089fb62d35feec6b03a92bd6e904f4c6282dd55",
+      "expected": "https://example.com/context(prefix/01/09506000134352"
+    },
+    {
+      "caseId": 21,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context(prefix"
+        }
+      },
+      "requestSha256": "aa6a129782b83601594ac2754acd52814458396274eddc0d3cd6c4bc0c5067a4",
+      "expected": "https://example.com/context(prefix/01/09506000134352"
+    },
+    {
+      "caseId": 22,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user(name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "7ca1854073cba028996f7424ca5e2050ecff47db595ab04a09cb7e7f9fd2c2a2",
+      "expected": "https://user(name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 23,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix(suffix"
+      },
+      "requestSha256": "6ee600f848933970c7045223d08950189bc7aa08db5332730ce56d3a35377cdf",
+      "expected": "https://example.com/01/09506000134352?x=prefix%28suffix"
+    },
+    {
+      "caseId": 24,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context)prefix/01/09506000134352"
+      },
+      "requestSha256": "ebae51ddde4154f49aa97c68ecfafc0d614dfbeb1e2ceff9593191ceb8d350c4",
+      "expected": "https://example.com/context)prefix/01/09506000134352"
+    },
+    {
+      "caseId": 25,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context)prefix"
+        }
+      },
+      "requestSha256": "42d7a538249f4e7befd3a083811ef54d0a368c51109fedd523113410ef99defb",
+      "expected": "https://example.com/context)prefix/01/09506000134352"
+    },
+    {
+      "caseId": 26,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user)name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "9921f14446c55d80bdff07c8a8d5b24aefde0375c45e842ca7e30b0c285993aa",
+      "expected": "https://user)name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 27,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix)suffix"
+      },
+      "requestSha256": "6c18b3524f556cab58ee1bad65bc794055601170eac6833f8ae3bbfac5e7c818",
+      "expected": "https://example.com/01/09506000134352?x=prefix%29suffix"
+    },
+    {
+      "caseId": 28,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context*prefix/01/09506000134352"
+      },
+      "requestSha256": "e63376c513ef0d41f599b7dd4fc2c7fe3731b94672cf233eb9d89d92d9b31e82",
+      "expected": "https://example.com/context*prefix/01/09506000134352"
+    },
+    {
+      "caseId": 29,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context*prefix"
+        }
+      },
+      "requestSha256": "24236bd9641db3fef33a813a237040987cf2b4bcfb17a2d1539f680f3fb4e330",
+      "expected": "https://example.com/context*prefix/01/09506000134352"
+    },
+    {
+      "caseId": 30,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user*name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "7a6a3b67b677ffc0774dd4816841bb565f70ce22bee0b0531d20d16e1bf3fa17",
+      "expected": "https://user*name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 31,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix*suffix"
+      },
+      "requestSha256": "1e4e96b9e34ff5c7f48c0a5c69bd2408ab4095d8c4fcc10b86bb41848413ff99",
+      "expected": "https://example.com/01/09506000134352?x=prefix*suffix"
+    },
+    {
+      "caseId": 32,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context+prefix/01/09506000134352"
+      },
+      "requestSha256": "d4c7e66bb4fee26c0f166e4f215c34406fb7fc2802cef5cdf0bdd8bd8726d90b",
+      "expected": "https://example.com/context+prefix/01/09506000134352"
+    },
+    {
+      "caseId": 33,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context+prefix"
+        }
+      },
+      "requestSha256": "03b5aff7068145c2ea5b028af83fcecb8a21112a44c211a17fb627d860bd9f49",
+      "expected": "https://example.com/context+prefix/01/09506000134352"
+    },
+    {
+      "caseId": 34,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user+name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "00ed21f401ec28511fda700de2c6a16a554c7c80a89792db48b426a0e9d6e6b2",
+      "expected": "https://user+name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 35,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix+suffix"
+      },
+      "requestSha256": "981f1f3d5f681c0aad9fd83a335c585954bbade572977edb54ff59f7b004e000",
+      "expected": "https://example.com/01/09506000134352?x=prefix+suffix"
+    },
+    {
+      "caseId": 36,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context,prefix/01/09506000134352"
+      },
+      "requestSha256": "7c9d29e67b10dc8f960e50c1367c0f72dc0574fa813305537ffda1990552f741",
+      "expected": "https://example.com/context,prefix/01/09506000134352"
+    },
+    {
+      "caseId": 37,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context,prefix"
+        }
+      },
+      "requestSha256": "ba443a4f5d29d7ca73d087e6a7abcbcc62768d99db8165c32c955a0d4f108c95",
+      "expected": "https://example.com/context,prefix/01/09506000134352"
+    },
+    {
+      "caseId": 38,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user,name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "ca930b995e9c63b9e35474f39790a829e4e8b7748be4688f0c4167f500b30d4b",
+      "expected": "https://user,name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 39,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix,suffix"
+      },
+      "requestSha256": "1e61bcbcef96fbe525acc4f588825d706e44cb5a5c5ae2613ac3867f99b73302",
+      "expected": "https://example.com/01/09506000134352?x=prefix%2Csuffix"
+    },
+    {
+      "caseId": 40,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context-prefix/01/09506000134352"
+      },
+      "requestSha256": "556191f9f31e535e01df33adc5a220ef2dee51154f5143deb1ed8ceb9fa8ad6e",
+      "expected": "https://example.com/context-prefix/01/09506000134352"
+    },
+    {
+      "caseId": 41,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context-prefix"
+        }
+      },
+      "requestSha256": "ac7e7f039f2f97865fec8a030c33315c225d2a6f7ff096b59dcb596c9b0fb2ff",
+      "expected": "https://example.com/context-prefix/01/09506000134352"
+    },
+    {
+      "caseId": 42,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user-name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "109d743b4b0b98cbf5e09590b1137761ce5922e262f990da58549a7446854792",
+      "expected": "https://user-name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 43,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix-suffix"
+      },
+      "requestSha256": "22b13cac444d972bea9a81a15b9d33fc155e3db6069edb6d3021d534243178f9",
+      "expected": "https://example.com/01/09506000134352?x=prefix-suffix"
+    },
+    {
+      "caseId": 44,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context.prefix/01/09506000134352"
+      },
+      "requestSha256": "3fdf01fb514bf7e6c2dd62faf87ddd9a1012adf51d070cf656e4a5f60dd0fabd",
+      "expected": "https://example.com/context.prefix/01/09506000134352"
+    },
+    {
+      "caseId": 45,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context.prefix"
+        }
+      },
+      "requestSha256": "b149da9a51198abe969833ceb9e3b9643d21f20fba5e6564e140e48e591f9259",
+      "expected": "https://example.com/context.prefix/01/09506000134352"
+    },
+    {
+      "caseId": 46,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user.name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "5b7329fa439adc5be7b0a1f53095b8fb4d5544bdeb186c00af1ba351e7c13789",
+      "expected": "https://user.name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 47,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix.suffix"
+      },
+      "requestSha256": "f7cc8938b55192b5a9e660a9137a5f7267067bf6f404acaa322f75e5553bb6d9",
+      "expected": "https://example.com/01/09506000134352?x=prefix.suffix"
+    },
+    {
+      "caseId": 48,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context0prefix/01/09506000134352"
+      },
+      "requestSha256": "63a3b22fff4f2ecc87ab35ffc5ea4e1bc84696a045852cfd7dc889bd91996435",
+      "expected": "https://example.com/context0prefix/01/09506000134352"
+    },
+    {
+      "caseId": 49,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context0prefix"
+        }
+      },
+      "requestSha256": "f7d9be6167e5efd064e9f314987096f8f8c899f30612fb5a2f0e33923af0b1eb",
+      "expected": "https://example.com/context0prefix/01/09506000134352"
+    },
+    {
+      "caseId": 50,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user0name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "0f68ebda9e29c6ac9d25f566bd09d7a784e2fdbc91f9a8b94760e21ffb9e4746",
+      "expected": "https://user0name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 51,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix0suffix"
+      },
+      "requestSha256": "0ad4ffa5c98e6741b16945035d7762b0f9e96fd1ba713058eec96502be4454c5",
+      "expected": "https://example.com/01/09506000134352?x=prefix0suffix"
+    },
+    {
+      "caseId": 52,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context1prefix/01/09506000134352"
+      },
+      "requestSha256": "b3fe26c6a134f7533f24894ce38b187ce115de1c6587dc687b09dd15220cec62",
+      "expected": "https://example.com/context1prefix/01/09506000134352"
+    },
+    {
+      "caseId": 53,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context1prefix"
+        }
+      },
+      "requestSha256": "aba6f458049e2a670cbed6c84f2b77cc47d0554bd7392b00779f68fe7948beb6",
+      "expected": "https://example.com/context1prefix/01/09506000134352"
+    },
+    {
+      "caseId": 54,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user1name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "e4a31fc387c1e3c6082db6b1bc30f02582561c188268eb31a78668a06b8e98b6",
+      "expected": "https://user1name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 55,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix1suffix"
+      },
+      "requestSha256": "c45dbab9a3ffdad8c9f73ed62e93ec36925f4ff8049e5ceaae33d7d1f9cfef51",
+      "expected": "https://example.com/01/09506000134352?x=prefix1suffix"
+    },
+    {
+      "caseId": 56,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context2prefix/01/09506000134352"
+      },
+      "requestSha256": "a63fde164ce2e0f28110fd4048b3f22af8fd7725431ed6d7e0b63b0b47ff315c",
+      "expected": "https://example.com/context2prefix/01/09506000134352"
+    },
+    {
+      "caseId": 57,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context2prefix"
+        }
+      },
+      "requestSha256": "43047b56721d95e17428a8c4392a861814ff4eea393e8bc8c2757d76b5d29d2d",
+      "expected": "https://example.com/context2prefix/01/09506000134352"
+    },
+    {
+      "caseId": 58,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user2name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "c98049af2976682551b8345330b0689c8cf2ddba0d2cc79e6ce3357f981614cb",
+      "expected": "https://user2name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 59,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix2suffix"
+      },
+      "requestSha256": "752a585891aaefc2d0c7ec3a46c23be74610e601b5af3b0327e502304ccf03fa",
+      "expected": "https://example.com/01/09506000134352?x=prefix2suffix"
+    },
+    {
+      "caseId": 60,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context3prefix/01/09506000134352"
+      },
+      "requestSha256": "7ee368b24f039fc92bee86487787a3f80b657c0a73a177b449e84312603c67da",
+      "expected": "https://example.com/context3prefix/01/09506000134352"
+    },
+    {
+      "caseId": 61,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context3prefix"
+        }
+      },
+      "requestSha256": "45b764b77131e16bb57cb921bf2b3d4c489bed2ca5db9ffa4ec47c8e8cb32ef5",
+      "expected": "https://example.com/context3prefix/01/09506000134352"
+    },
+    {
+      "caseId": 62,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user3name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "3cf24cee529ca7156a3410a7ec30bc3a9fb24f0ee0188b691260b62a03684458",
+      "expected": "https://user3name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 63,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix3suffix"
+      },
+      "requestSha256": "f7397d4038b3691c2d712e88ff8c1587adf3970d35cd78680fca13ce9b9b4ca0",
+      "expected": "https://example.com/01/09506000134352?x=prefix3suffix"
+    },
+    {
+      "caseId": 64,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context4prefix/01/09506000134352"
+      },
+      "requestSha256": "afdaeb1e527d26aca6dccffa2d70b0368a920b37ee52467cabf0ffb29ddd4f60",
+      "expected": "https://example.com/context4prefix/01/09506000134352"
+    },
+    {
+      "caseId": 65,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context4prefix"
+        }
+      },
+      "requestSha256": "20303f8fb89ec1c43e93d725b3efa81d2f69d5f77de5b9560f9dc7b65152607e",
+      "expected": "https://example.com/context4prefix/01/09506000134352"
+    },
+    {
+      "caseId": 66,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user4name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "72cbc13c6077cd4facd7918040b04030c0a0f2798b5076729e957c878ff28265",
+      "expected": "https://user4name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 67,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix4suffix"
+      },
+      "requestSha256": "033403acd87d36f024fc6a45ffa5b8c42db20ade88044c484353be5b72538543",
+      "expected": "https://example.com/01/09506000134352?x=prefix4suffix"
+    },
+    {
+      "caseId": 68,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context5prefix/01/09506000134352"
+      },
+      "requestSha256": "73c26de990235ff1f82ee778e109e178aaa2b8609fdfbdc1c1e7e888b5552543",
+      "expected": "https://example.com/context5prefix/01/09506000134352"
+    },
+    {
+      "caseId": 69,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context5prefix"
+        }
+      },
+      "requestSha256": "9ad82b645a830e88c4f3fb29b98ff82c818758f4089b403f0fabdfd41fa7a788",
+      "expected": "https://example.com/context5prefix/01/09506000134352"
+    },
+    {
+      "caseId": 70,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user5name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "d7f0fe8ab1fe8cdf9e033d0e583b96371942de547c7c1eb4ac36cedf50c82b23",
+      "expected": "https://user5name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 71,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix5suffix"
+      },
+      "requestSha256": "c55874f53fa1446b2797feb7443edcfed69238450366306a0f8ee486aa31ae73",
+      "expected": "https://example.com/01/09506000134352?x=prefix5suffix"
+    },
+    {
+      "caseId": 72,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context6prefix/01/09506000134352"
+      },
+      "requestSha256": "b30a40ca775479f8c56c1d658a05334b502d805b6e3069aeea44e3f935054173",
+      "expected": "https://example.com/context6prefix/01/09506000134352"
+    },
+    {
+      "caseId": 73,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context6prefix"
+        }
+      },
+      "requestSha256": "b9f0003d02cd6029c7bb578c644c9292fb66c7a17a502c9181144e68eabc5feb",
+      "expected": "https://example.com/context6prefix/01/09506000134352"
+    },
+    {
+      "caseId": 74,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user6name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "72117588a87873d6a39b2a51f700f396f5a6c4164d4939232b3ac68b7ea83e00",
+      "expected": "https://user6name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 75,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix6suffix"
+      },
+      "requestSha256": "ab889af67c9dcdc41efe0489a2280f0c3de93bc9dfc5caa3e2358b0c96035304",
+      "expected": "https://example.com/01/09506000134352?x=prefix6suffix"
+    },
+    {
+      "caseId": 76,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context7prefix/01/09506000134352"
+      },
+      "requestSha256": "4f4dc149e7f3b8ab120cd847c453e272da695b064d5aedaa079aa647be8169a9",
+      "expected": "https://example.com/context7prefix/01/09506000134352"
+    },
+    {
+      "caseId": 77,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context7prefix"
+        }
+      },
+      "requestSha256": "8b968b8cad06a3bf837b75763c1ba6cc48fc54f7c4c0f29baf61c742b5c08095",
+      "expected": "https://example.com/context7prefix/01/09506000134352"
+    },
+    {
+      "caseId": 78,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user7name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "72ec2b363518857551fc54b61e0cb1736ed39c7a99a03786b464e92f624e2ab2",
+      "expected": "https://user7name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 79,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix7suffix"
+      },
+      "requestSha256": "444648625425e682080988298303df149a5a4d1fc4bbcf83bf074534e83775d7",
+      "expected": "https://example.com/01/09506000134352?x=prefix7suffix"
+    },
+    {
+      "caseId": 80,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context8prefix/01/09506000134352"
+      },
+      "requestSha256": "eab08c56cec819e6cc19b7c13742fb49977edbaba0f37d803445e6474e91147a",
+      "expected": "https://example.com/context8prefix/01/09506000134352"
+    },
+    {
+      "caseId": 81,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context8prefix"
+        }
+      },
+      "requestSha256": "b66695ab6e0de30371b466d9710e07c4b6a958a0bec5456b02ecf6d3cd6e0958",
+      "expected": "https://example.com/context8prefix/01/09506000134352"
+    },
+    {
+      "caseId": 82,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user8name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "eb138dd684fb768dd11214479c29a094b3d75883b5e461fe7a36e33dea965209",
+      "expected": "https://user8name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 83,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix8suffix"
+      },
+      "requestSha256": "a5d06f80137e062407a5e94a1c99f87065557c938d2b40056842a54e093271bc",
+      "expected": "https://example.com/01/09506000134352?x=prefix8suffix"
+    },
+    {
+      "caseId": 84,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context9prefix/01/09506000134352"
+      },
+      "requestSha256": "0a65e782d6315b5ce6e1666f31bdf30885f623e175a42612d53523b68b1a6684",
+      "expected": "https://example.com/context9prefix/01/09506000134352"
+    },
+    {
+      "caseId": 85,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context9prefix"
+        }
+      },
+      "requestSha256": "b21f73e3a2cd8fe377b7aee5245dfeca9d997a49860d535e15451ef3b06dbf6a",
+      "expected": "https://example.com/context9prefix/01/09506000134352"
+    },
+    {
+      "caseId": 86,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user9name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "a0dcb0e28d205a13c4bc4222ed8c73b83fd6675fc3a036cb4319115e46ed39e4",
+      "expected": "https://user9name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 87,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix9suffix"
+      },
+      "requestSha256": "80c7b508f695f80607b5a25ec311b639df9c5ab1dab580a0bfb2babc775bc759",
+      "expected": "https://example.com/01/09506000134352?x=prefix9suffix"
+    },
+    {
+      "caseId": 88,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context:prefix/01/09506000134352"
+      },
+      "requestSha256": "559dc6139161bedb032f0b86b0c60b6c5db426ff9be17ddd536d9c81d942ca72",
+      "expected": "https://example.com/context:prefix/01/09506000134352"
+    },
+    {
+      "caseId": 89,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context:prefix"
+        }
+      },
+      "requestSha256": "0b22a731b21f227f45d5447afda1fe17610e89788e364ec6863f81ca4fe2e667",
+      "expected": "https://example.com/context:prefix/01/09506000134352"
+    },
+    {
+      "caseId": 90,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix:suffix"
+      },
+      "requestSha256": "eff07845c50910b0fc8dbaa50ccf75699b20c74e4d1d82add994390428173e1e",
+      "expected": "https://example.com/01/09506000134352?x=prefix%3Asuffix"
+    },
+    {
+      "caseId": 91,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context;prefix/01/09506000134352"
+      },
+      "requestSha256": "fa2c9c64d1eadb29b8c159f2ccae7673d55e500fc4fef2e8b625764058c83fd3",
+      "expected": "https://example.com/context;prefix/01/09506000134352"
+    },
+    {
+      "caseId": 92,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context;prefix"
+        }
+      },
+      "requestSha256": "34ed71c26cea842d82e7fe72cd90b0b50fcc26c80b12ec15cfceaaef5882d885",
+      "expected": "https://example.com/context;prefix/01/09506000134352"
+    },
+    {
+      "caseId": 93,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user;name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "bd9be9dc5e6bbd7f9931832f58fd995f104703e14a79301930174d61d77abd8f",
+      "expected": "https://user%3Bname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 94,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix;suffix"
+      },
+      "requestSha256": "e62c106793d52745ab2cf671666ed10f385ac807548ccded3f46f96f4aadda11",
+      "expected": "https://example.com/01/09506000134352?x=prefix%3Bsuffix"
+    },
+    {
+      "caseId": 95,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context<prefix/01/09506000134352"
+      },
+      "requestSha256": "a92e0bc8fd542a11ef51bb61e66adf52055609759cd62dc810887eebf6983d0e",
+      "expected": "https://example.com/context%3Cprefix/01/09506000134352"
+    },
+    {
+      "caseId": 96,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context<prefix"
+        }
+      },
+      "requestSha256": "4d92270e5815a716d647a7ce94165d910f6adb4b7f654a797dd009aaab569faf",
+      "expected": "https://example.com/context%3Cprefix/01/09506000134352"
+    },
+    {
+      "caseId": 97,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user<name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "c207a1d184e32d74fc0503aca5ce61d4b883dd3795dfaaba405472faa1d5574a",
+      "expected": "https://user%3Cname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 98,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix<suffix"
+      },
+      "requestSha256": "7186fb5758f6883f1e3de1f497f2a0dec2e71b83ab1c9d7990477652c11643d8",
+      "expected": "https://example.com/01/09506000134352?x=prefix%3Csuffix"
+    },
+    {
+      "caseId": 99,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context=prefix/01/09506000134352"
+      },
+      "requestSha256": "945fa59dfcf80609eb7ee95cd49e8e79cc8733d9f00593b953f1dd3e8febd9d1",
+      "expected": "https://example.com/context=prefix/01/09506000134352"
+    },
+    {
+      "caseId": 100,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context=prefix"
+        }
+      },
+      "requestSha256": "cf621387ff78d9191f36687b823ebe6f7947c18e86e1f293f98ae93177381876",
+      "expected": "https://example.com/context=prefix/01/09506000134352"
+    },
+    {
+      "caseId": 101,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user=name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "893fc163736901ad63a001c0cd53fb62330b6cc9412c69025b8411faa01293bb",
+      "expected": "https://user%3Dname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 102,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix=suffix"
+      },
+      "requestSha256": "da05d3f9c2c0f7c08229c741ad8f66bbab8e2f138b890bd8cecac1fdbe9884af",
+      "expected": "https://example.com/01/09506000134352?x=prefix%3Dsuffix"
+    },
+    {
+      "caseId": 103,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context>prefix/01/09506000134352"
+      },
+      "requestSha256": "0362014d4985bf4cf0ff96df0a57f70275497bef1b8c653b07f3df763f99b3b8",
+      "expected": "https://example.com/context%3Eprefix/01/09506000134352"
+    },
+    {
+      "caseId": 104,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context>prefix"
+        }
+      },
+      "requestSha256": "5062f1fd40d53953ea317e6069e3e4151eb20611f8381a1f29eb960cfca9133e",
+      "expected": "https://example.com/context%3Eprefix/01/09506000134352"
+    },
+    {
+      "caseId": 105,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user>name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "3db0255ed9d7b98a2f8e9407e87b706823736bcbed98595bf49f1e6e4192dd03",
+      "expected": "https://user%3Ename:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 106,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix>suffix"
+      },
+      "requestSha256": "8b9042d4a8896a305577448ead5cad6a56ae433701b6428f34c35f8356eaa107",
+      "expected": "https://example.com/01/09506000134352?x=prefix%3Esuffix"
+    },
+    {
+      "caseId": 107,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context@prefix/01/09506000134352"
+      },
+      "requestSha256": "422ba327d40e2056572c904791aada26cca01b60f10c27830a2b20059ef8bde5",
+      "expected": "https://example.com/context@prefix/01/09506000134352"
+    },
+    {
+      "caseId": 108,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context@prefix"
+        }
+      },
+      "requestSha256": "c5f71e9d575cf468bbe46ffd503a3f1933bed9a43394a1ea1fd6b2da5d26679d",
+      "expected": "https://example.com/context@prefix/01/09506000134352"
+    },
+    {
+      "caseId": 109,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix@suffix"
+      },
+      "requestSha256": "ce19cb790bbb1488d19c5888260c862076ac506730275e9535e89aa431a1813a",
+      "expected": "https://example.com/01/09506000134352?x=prefix%40suffix"
+    },
+    {
+      "caseId": 110,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextAprefix/01/09506000134352"
+      },
+      "requestSha256": "892a9e36ac3aa2b84662cd0e66c8b02cf8103834b76f86b4895c17ee1fcbc877",
+      "expected": "https://example.com/contextAprefix/01/09506000134352"
+    },
+    {
+      "caseId": 111,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextAprefix"
+        }
+      },
+      "requestSha256": "ea325c3286abc1b6f0353695ef5f3502c7d199c960c39800aee715d447fdd58a",
+      "expected": "https://example.com/contextAprefix/01/09506000134352"
+    },
+    {
+      "caseId": 112,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userAname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "6dfc7d4c343094034f0cc38fc885d3c36f18db1b9693b3df0069a85e057a4e1d",
+      "expected": "https://userAname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 113,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixAsuffix"
+      },
+      "requestSha256": "31914ee3a3c75b81b563d7a064fe38cc6760c1a666a5aef885611ed29434d8b6",
+      "expected": "https://example.com/01/09506000134352?x=prefixAsuffix"
+    },
+    {
+      "caseId": 114,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextBprefix/01/09506000134352"
+      },
+      "requestSha256": "c0c1d14a9499d4bd666a3cf2123ba20cca2aaa5074150e0af66582c97ec05086",
+      "expected": "https://example.com/contextBprefix/01/09506000134352"
+    },
+    {
+      "caseId": 115,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextBprefix"
+        }
+      },
+      "requestSha256": "0176ee68d347223da90adfb12f1a9e4ae3a43a0f31fd758de8c0141be154197a",
+      "expected": "https://example.com/contextBprefix/01/09506000134352"
+    },
+    {
+      "caseId": 116,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userBname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "845cd178ffecdb628e70049b54dff004b89740194df35aba41797b9b1343256b",
+      "expected": "https://userBname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 117,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixBsuffix"
+      },
+      "requestSha256": "60918f4096019e7fa5bf720e8cc17f31b8e46249a7298f09235dea4dd4f43431",
+      "expected": "https://example.com/01/09506000134352?x=prefixBsuffix"
+    },
+    {
+      "caseId": 118,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextCprefix/01/09506000134352"
+      },
+      "requestSha256": "fbfd116a48e5fa870cc9c96209a18901c763cb1679c9772ee84f09cf54e7f7b1",
+      "expected": "https://example.com/contextCprefix/01/09506000134352"
+    },
+    {
+      "caseId": 119,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextCprefix"
+        }
+      },
+      "requestSha256": "60398d99df9db06815d0fc557babc0179c6dbf63743acda7fbcf068bf4de7f28",
+      "expected": "https://example.com/contextCprefix/01/09506000134352"
+    },
+    {
+      "caseId": 120,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userCname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "d6b31ea33204b9ddddfcaedbf29f50e4a04643e5602a52d9b0ce6287aeecd359",
+      "expected": "https://userCname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 121,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixCsuffix"
+      },
+      "requestSha256": "a9aefd8f4d586dafb706bc80c26906f98476e6f1805eaecf4f65c26013a8c54e",
+      "expected": "https://example.com/01/09506000134352?x=prefixCsuffix"
+    },
+    {
+      "caseId": 122,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextDprefix/01/09506000134352"
+      },
+      "requestSha256": "e4140611c1327b1271cd7c4efbd181040dec34e98a4ee4847bda24f74b396bb6",
+      "expected": "https://example.com/contextDprefix/01/09506000134352"
+    },
+    {
+      "caseId": 123,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextDprefix"
+        }
+      },
+      "requestSha256": "a0f52540df15638b52c446fe4bc47b357bef7f72eaf482eda263f1940ae4a0a7",
+      "expected": "https://example.com/contextDprefix/01/09506000134352"
+    },
+    {
+      "caseId": 124,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userDname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "1bc9089ba8e216c5b746bbf91579ef8d94b6f733864e5caa0a738f642cfe3c96",
+      "expected": "https://userDname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 125,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixDsuffix"
+      },
+      "requestSha256": "a6445862c129d9a67acfdbb76b122c75936784c286f2e2b9a1da5df0c4ef597f",
+      "expected": "https://example.com/01/09506000134352?x=prefixDsuffix"
+    },
+    {
+      "caseId": 126,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextEprefix/01/09506000134352"
+      },
+      "requestSha256": "82903552a1f432a7058e7216757dfe789416885265a17a103f173269b8a6ce7b",
+      "expected": "https://example.com/contextEprefix/01/09506000134352"
+    },
+    {
+      "caseId": 127,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextEprefix"
+        }
+      },
+      "requestSha256": "da6b898373ea044cce5534c6c6df5177e704ef8440a0b1f7025e6004917c5b5d",
+      "expected": "https://example.com/contextEprefix/01/09506000134352"
+    },
+    {
+      "caseId": 128,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userEname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "bc7decc851b64db964d551476e132326a78343de42dc70aaeff5d774f168c6f2",
+      "expected": "https://userEname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 129,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixEsuffix"
+      },
+      "requestSha256": "e2f5d45cf935ed4d20ff26e9939efbaf92dc0f6ea3e7946a1e70295900717e37",
+      "expected": "https://example.com/01/09506000134352?x=prefixEsuffix"
+    },
+    {
+      "caseId": 130,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextFprefix/01/09506000134352"
+      },
+      "requestSha256": "1f00e36c819025b92a3c8454fa0ba354a4690c0f5dc32b02678e88fb2c3c3529",
+      "expected": "https://example.com/contextFprefix/01/09506000134352"
+    },
+    {
+      "caseId": 131,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextFprefix"
+        }
+      },
+      "requestSha256": "6054453e4620846bcdfb9c8f415ad8ffff38291a05ff2bbeecf3fa8eee144890",
+      "expected": "https://example.com/contextFprefix/01/09506000134352"
+    },
+    {
+      "caseId": 132,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userFname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "72bd8bac4d84ae80ced724448b8c7166bebb21c489b81c0fa532d1749db8bad5",
+      "expected": "https://userFname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 133,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixFsuffix"
+      },
+      "requestSha256": "49a0b6f53922756e9552b4d60ece2932b779437b21bee0d3ebc1322d652d471b",
+      "expected": "https://example.com/01/09506000134352?x=prefixFsuffix"
+    },
+    {
+      "caseId": 134,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextGprefix/01/09506000134352"
+      },
+      "requestSha256": "1f819c8db82eeed3b7f00f5432115a3069fa4431d00a97aa29e74d5dee53d6ea",
+      "expected": "https://example.com/contextGprefix/01/09506000134352"
+    },
+    {
+      "caseId": 135,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextGprefix"
+        }
+      },
+      "requestSha256": "14f0a6654eeb431ff89a22bd5fd3d9cc344324f54815879413f48b12e49503d9",
+      "expected": "https://example.com/contextGprefix/01/09506000134352"
+    },
+    {
+      "caseId": 136,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userGname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "e47e498da7b12d44fdcbef14f92256ba71533adbe09c423e3bcecf72f6f36624",
+      "expected": "https://userGname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 137,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixGsuffix"
+      },
+      "requestSha256": "832fb0572b2bcf2abf317dc4bef5f080a09e069d721dc64926816bc589b43dce",
+      "expected": "https://example.com/01/09506000134352?x=prefixGsuffix"
+    },
+    {
+      "caseId": 138,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextHprefix/01/09506000134352"
+      },
+      "requestSha256": "c3d6548b4b5a4793fd40367dc5d9af22d1bcf6f68a42924d6e7c0d7e45680ab0",
+      "expected": "https://example.com/contextHprefix/01/09506000134352"
+    },
+    {
+      "caseId": 139,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextHprefix"
+        }
+      },
+      "requestSha256": "edf1b509a159e320f1aecfe1a3d907acab0e171e7224e1eede5c72dee636648c",
+      "expected": "https://example.com/contextHprefix/01/09506000134352"
+    },
+    {
+      "caseId": 140,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userHname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "4fb729b4747bc1024745f546d98e6c484b070ab195c7ec4ef01ad909e11478f6",
+      "expected": "https://userHname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 141,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixHsuffix"
+      },
+      "requestSha256": "6dd6f22b886bf2f4ea5ec17cda109680c963d3391819be29de03353440c7b350",
+      "expected": "https://example.com/01/09506000134352?x=prefixHsuffix"
+    },
+    {
+      "caseId": 142,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextIprefix/01/09506000134352"
+      },
+      "requestSha256": "fea8844564c094fd7f58a0e4ffe703de88ee34c4f84ac248d5cb0670d4a3db70",
+      "expected": "https://example.com/contextIprefix/01/09506000134352"
+    },
+    {
+      "caseId": 143,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextIprefix"
+        }
+      },
+      "requestSha256": "a4ea8a013d5ee93a5068177a232d0854514cb7cb71118ce6a78cb659540d1f92",
+      "expected": "https://example.com/contextIprefix/01/09506000134352"
+    },
+    {
+      "caseId": 144,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userIname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "49d29d602c0a89957bd09d779c4fca3b15de0bf5c37c3ecabf6cb38a932d34fc",
+      "expected": "https://userIname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 145,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixIsuffix"
+      },
+      "requestSha256": "63e7123faaba52182444ffc1df4524cac1d36a2dc5db49e6ffd2cd6ba89ea4c0",
+      "expected": "https://example.com/01/09506000134352?x=prefixIsuffix"
+    },
+    {
+      "caseId": 146,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextJprefix/01/09506000134352"
+      },
+      "requestSha256": "87d52a678074b2da1f8482ce46da3da2c6807570963bc22f2728db667fefa7e6",
+      "expected": "https://example.com/contextJprefix/01/09506000134352"
+    },
+    {
+      "caseId": 147,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextJprefix"
+        }
+      },
+      "requestSha256": "54d07a00e35ed3429cead0b651a030623b754279a8f1fad8762add7e343ccc4b",
+      "expected": "https://example.com/contextJprefix/01/09506000134352"
+    },
+    {
+      "caseId": 148,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userJname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "33841ccf17f5791b8eda8a9d2f6f85be8d3a38ddb62e6869400b693653d6d5f0",
+      "expected": "https://userJname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 149,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixJsuffix"
+      },
+      "requestSha256": "6f70e75ef9f915e734b2d557c46217ecff553cc7fe8a7491b1d36c193cd58b11",
+      "expected": "https://example.com/01/09506000134352?x=prefixJsuffix"
+    },
+    {
+      "caseId": 150,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextKprefix/01/09506000134352"
+      },
+      "requestSha256": "d0379001e8fa38e32487da0254e161e22338170093dc2ad09bad0c00d062581f",
+      "expected": "https://example.com/contextKprefix/01/09506000134352"
+    },
+    {
+      "caseId": 151,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextKprefix"
+        }
+      },
+      "requestSha256": "452228b19caf758cfa297b22135ba6368a7dfe9022fefdce29dc27a28f899566",
+      "expected": "https://example.com/contextKprefix/01/09506000134352"
+    },
+    {
+      "caseId": 152,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userKname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "fdb7b798719cd9b0d2a7c38ee585ddbd067062ea1a9a0f7a802d6f559f71a94d",
+      "expected": "https://userKname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 153,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixKsuffix"
+      },
+      "requestSha256": "da305dc37ce1806cd6fd648d57c33faf7add56322bee8711322e7c651eadaef0",
+      "expected": "https://example.com/01/09506000134352?x=prefixKsuffix"
+    },
+    {
+      "caseId": 154,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextLprefix/01/09506000134352"
+      },
+      "requestSha256": "ef3f35728e30003d980bf0e6fc6491c3452bc7b79062491cdab05b0022670212",
+      "expected": "https://example.com/contextLprefix/01/09506000134352"
+    },
+    {
+      "caseId": 155,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextLprefix"
+        }
+      },
+      "requestSha256": "3a661f88f13748aab04899202fc03ff5347d78dae0fe236b6ede8c8e170986b7",
+      "expected": "https://example.com/contextLprefix/01/09506000134352"
+    },
+    {
+      "caseId": 156,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userLname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "acf0772466ec1d4308a4d3bf45f24d20ad6c00c6cda6d89cf77f112acf62f635",
+      "expected": "https://userLname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 157,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixLsuffix"
+      },
+      "requestSha256": "196e4e170b1bec9e7057e4aff01abd8914ac31ed0166490bc36017d3bdce8db5",
+      "expected": "https://example.com/01/09506000134352?x=prefixLsuffix"
+    },
+    {
+      "caseId": 158,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextMprefix/01/09506000134352"
+      },
+      "requestSha256": "1312b67e1281e873af2c6632538eb74891c9f4a1a09a5e5de4fd80814b11f4f7",
+      "expected": "https://example.com/contextMprefix/01/09506000134352"
+    },
+    {
+      "caseId": 159,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextMprefix"
+        }
+      },
+      "requestSha256": "da1bb5bd7af8aa5dfca9cf77821cefc4159195009095044aff17d40f57ef2f57",
+      "expected": "https://example.com/contextMprefix/01/09506000134352"
+    },
+    {
+      "caseId": 160,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userMname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "6db188c8738da64ee8b5b268bb92552c0eb5e03f672eeb17a68789578008c33a",
+      "expected": "https://userMname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 161,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixMsuffix"
+      },
+      "requestSha256": "17f5324cfbdf2c512e095fb0900d8d3bf225db8c5c196ef022abf89704a065c2",
+      "expected": "https://example.com/01/09506000134352?x=prefixMsuffix"
+    },
+    {
+      "caseId": 162,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextNprefix/01/09506000134352"
+      },
+      "requestSha256": "6940afec47d193329090353305ee66846c8ae1480786800d3e0c6e327e80dbda",
+      "expected": "https://example.com/contextNprefix/01/09506000134352"
+    },
+    {
+      "caseId": 163,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextNprefix"
+        }
+      },
+      "requestSha256": "35b324a93c581bfe9068395288c727582aba928d79182b8eec677b120349189d",
+      "expected": "https://example.com/contextNprefix/01/09506000134352"
+    },
+    {
+      "caseId": 164,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userNname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "831ae1e56781a6f7dd7ab25570d88f7434061b42f4eb65ea3367aa2414166935",
+      "expected": "https://userNname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 165,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixNsuffix"
+      },
+      "requestSha256": "0825c7ae920eda7cbe82ee5dfa0f6f60f324c72f7ea655420876ebb55877363c",
+      "expected": "https://example.com/01/09506000134352?x=prefixNsuffix"
+    },
+    {
+      "caseId": 166,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextOprefix/01/09506000134352"
+      },
+      "requestSha256": "b42080aefa3eb7a9fecd7308c16cd20317cebbb25fd27287a50d12b4d65229ff",
+      "expected": "https://example.com/contextOprefix/01/09506000134352"
+    },
+    {
+      "caseId": 167,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextOprefix"
+        }
+      },
+      "requestSha256": "89e8ada892e20f8ae8b9d52d1d14f3c6ee4a6ae9d2d83db5fb490eaaf2d843e8",
+      "expected": "https://example.com/contextOprefix/01/09506000134352"
+    },
+    {
+      "caseId": 168,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userOname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "1eb2e11bfb59e0ddafd2a2091081bf47ad3c07253e8f98893283fc2eb92f4c4f",
+      "expected": "https://userOname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 169,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixOsuffix"
+      },
+      "requestSha256": "d75ea64f368893555a2abf1bf1be8518556211b957336c04bef1f4c090c29f8e",
+      "expected": "https://example.com/01/09506000134352?x=prefixOsuffix"
+    },
+    {
+      "caseId": 170,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextPprefix/01/09506000134352"
+      },
+      "requestSha256": "44b191450c7cee93905520d9a3bf4f06e3b2fad4df31c10d54b6f71a60daa3bc",
+      "expected": "https://example.com/contextPprefix/01/09506000134352"
+    },
+    {
+      "caseId": 171,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextPprefix"
+        }
+      },
+      "requestSha256": "7d9d2466a2334ac640c4f3e89eb6762f4dd2112c5326cf99ce7cbfa80c26b734",
+      "expected": "https://example.com/contextPprefix/01/09506000134352"
+    },
+    {
+      "caseId": 172,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userPname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "34ec4930118b43b203b1d74dadfa077f9b77e5801e93e607aed71c18e59a824b",
+      "expected": "https://userPname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 173,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixPsuffix"
+      },
+      "requestSha256": "cdb54fea3fd592014de905546d0cf8911c5c8afd315fb20f5f3a10d4262b7dc1",
+      "expected": "https://example.com/01/09506000134352?x=prefixPsuffix"
+    },
+    {
+      "caseId": 174,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextQprefix/01/09506000134352"
+      },
+      "requestSha256": "27d9d183950ed979d296050a922adf723702105d5de8d22754b00a442d310dce",
+      "expected": "https://example.com/contextQprefix/01/09506000134352"
+    },
+    {
+      "caseId": 175,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextQprefix"
+        }
+      },
+      "requestSha256": "869ff7faf39b37179d2d0e4499bef101c694ae5537fa287314b0b6dc7030e316",
+      "expected": "https://example.com/contextQprefix/01/09506000134352"
+    },
+    {
+      "caseId": 176,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userQname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "bef9c9b4517068ea9a93fc4dfa04f81fda91579d85811c33770f0723a0bfe90d",
+      "expected": "https://userQname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 177,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixQsuffix"
+      },
+      "requestSha256": "bf758777a5d09e1b4f81f9db73d6c9e68ffa85f1ca1162a0919279370e78c3e3",
+      "expected": "https://example.com/01/09506000134352?x=prefixQsuffix"
+    },
+    {
+      "caseId": 178,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextRprefix/01/09506000134352"
+      },
+      "requestSha256": "3f5cb792677a5b4265dac635738144e75654034e9e5978455d1acc1492f91b13",
+      "expected": "https://example.com/contextRprefix/01/09506000134352"
+    },
+    {
+      "caseId": 179,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextRprefix"
+        }
+      },
+      "requestSha256": "41530d72dce7a91437f7b1251e9b228ddc54c685dda5b63d77bea800dd79bf78",
+      "expected": "https://example.com/contextRprefix/01/09506000134352"
+    },
+    {
+      "caseId": 180,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userRname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "a232597cf9d730cf50971174cf1965053239a8fbf7046b74556a935377278059",
+      "expected": "https://userRname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 181,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixRsuffix"
+      },
+      "requestSha256": "e301875ceb890a54e8352348a07b84c6412039a657ee3c3fca6b82b701d6fbaa",
+      "expected": "https://example.com/01/09506000134352?x=prefixRsuffix"
+    },
+    {
+      "caseId": 182,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextSprefix/01/09506000134352"
+      },
+      "requestSha256": "b4d2669f0dd9663372bb13a9a1651cb32865cd3db4ac83fa0daf1fbc5dd2c755",
+      "expected": "https://example.com/contextSprefix/01/09506000134352"
+    },
+    {
+      "caseId": 183,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextSprefix"
+        }
+      },
+      "requestSha256": "0ae81aa7a81ddfeb8f6721675c1c77db9e52c293792b8c8cdad3cc7e8204d415",
+      "expected": "https://example.com/contextSprefix/01/09506000134352"
+    },
+    {
+      "caseId": 184,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userSname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "fa65b690567de7424fbb95a719be43e32435aea47563d4bc4603ec6880c027b1",
+      "expected": "https://userSname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 185,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixSsuffix"
+      },
+      "requestSha256": "922c41a9a65958d4d7dc5858ecf05ff983b0d4abd2b2ab9cd7c763297f7b303a",
+      "expected": "https://example.com/01/09506000134352?x=prefixSsuffix"
+    },
+    {
+      "caseId": 186,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextTprefix/01/09506000134352"
+      },
+      "requestSha256": "9c3aaca38a5b02e4badc8c00214148e3e44f29755e14ed3b23c90d6fe098b471",
+      "expected": "https://example.com/contextTprefix/01/09506000134352"
+    },
+    {
+      "caseId": 187,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextTprefix"
+        }
+      },
+      "requestSha256": "7fc2ddf4b2434db44f8f1a4695eb32bf4cd7bf35d3eb7bb9ca5d823a2aa266fe",
+      "expected": "https://example.com/contextTprefix/01/09506000134352"
+    },
+    {
+      "caseId": 188,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userTname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "639be9df4da67da565cdc545c34abd0ed4f0b9b38d0099280268bd15ef959c2f",
+      "expected": "https://userTname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 189,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixTsuffix"
+      },
+      "requestSha256": "f9de2b292a763a7fefda7c83fb8f6282cbdd4189a2d2f6b44437c662a3497470",
+      "expected": "https://example.com/01/09506000134352?x=prefixTsuffix"
+    },
+    {
+      "caseId": 190,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextUprefix/01/09506000134352"
+      },
+      "requestSha256": "a6cf9d8083678e22fceb99d008d3d3d1626ce7d248f408499a8d8dd163ffc876",
+      "expected": "https://example.com/contextUprefix/01/09506000134352"
+    },
+    {
+      "caseId": 191,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextUprefix"
+        }
+      },
+      "requestSha256": "bf488b7f9eae736c8aff1d910dd6dff460977389ab7682231956dc971b746c5d",
+      "expected": "https://example.com/contextUprefix/01/09506000134352"
+    },
+    {
+      "caseId": 192,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userUname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "cd266db95ccf7491eeb7b5aed8129f3a7b0fe64205925e1b3c95ae81b68f06ba",
+      "expected": "https://userUname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 193,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixUsuffix"
+      },
+      "requestSha256": "a5da9e33f653ceab5b96a08f405de1099dec0190a514aa753b68f5c05acb8855",
+      "expected": "https://example.com/01/09506000134352?x=prefixUsuffix"
+    },
+    {
+      "caseId": 194,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextVprefix/01/09506000134352"
+      },
+      "requestSha256": "f0e06c08654ad0afcdcdb1ac9231b4176916676c86d001eea8230671dcf446b1",
+      "expected": "https://example.com/contextVprefix/01/09506000134352"
+    },
+    {
+      "caseId": 195,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextVprefix"
+        }
+      },
+      "requestSha256": "4fac94f8052695fbdf5f1acccac5a95b7b0cb638b36ce34eed6d0e112b19d727",
+      "expected": "https://example.com/contextVprefix/01/09506000134352"
+    },
+    {
+      "caseId": 196,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userVname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "d34a7f3489eee20d3dbbd454ef0659956c4c154946659b1c576e97db0c877db8",
+      "expected": "https://userVname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 197,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixVsuffix"
+      },
+      "requestSha256": "c66f16859c7d52f06babfa3a3e5a8695b79f6efa2c19af0fab30c84393d3cdf4",
+      "expected": "https://example.com/01/09506000134352?x=prefixVsuffix"
+    },
+    {
+      "caseId": 198,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextWprefix/01/09506000134352"
+      },
+      "requestSha256": "cdda0ab63c87536a76acc3f821ccb898a7cc3a711c4c9beb813fc111027cfc1e",
+      "expected": "https://example.com/contextWprefix/01/09506000134352"
+    },
+    {
+      "caseId": 199,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextWprefix"
+        }
+      },
+      "requestSha256": "9994eb2abdef4a0d4f497dea6524e0d2041a91c1d7a18d4308a5f2f86699dd4a",
+      "expected": "https://example.com/contextWprefix/01/09506000134352"
+    },
+    {
+      "caseId": 200,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userWname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "f2300175e523d59855bbf1aa2be45cf92fe1de81f30d84c7301d14608d5ba2f3",
+      "expected": "https://userWname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 201,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixWsuffix"
+      },
+      "requestSha256": "c40545b79eec3b1abb579d308a3df31c617e382442c1085c0f75b9853b6c687a",
+      "expected": "https://example.com/01/09506000134352?x=prefixWsuffix"
+    },
+    {
+      "caseId": 202,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextXprefix/01/09506000134352"
+      },
+      "requestSha256": "00d1070014f106644178ef10c316097993b8297b2a27332eff7f021e70c9fc1b",
+      "expected": "https://example.com/contextXprefix/01/09506000134352"
+    },
+    {
+      "caseId": 203,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextXprefix"
+        }
+      },
+      "requestSha256": "b90cf0937e0af1b4b07f1eab60a5caf5fa52d0bf11e10ef11cbb07e9602d600d",
+      "expected": "https://example.com/contextXprefix/01/09506000134352"
+    },
+    {
+      "caseId": 204,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userXname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "448bd603e7470bf2fb435a2a51b0cccfe43f24dd5ca1d924494f067af11ada0b",
+      "expected": "https://userXname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 205,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixXsuffix"
+      },
+      "requestSha256": "02d1142ecfc16f9b3830591ddf8ef10dbd165b0a68ca53bc0b83c3113e25bc26",
+      "expected": "https://example.com/01/09506000134352?x=prefixXsuffix"
+    },
+    {
+      "caseId": 206,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextYprefix/01/09506000134352"
+      },
+      "requestSha256": "326d36ed1da70aae5d605818f0995401b5a1f8540bd8503b70777705e3587257",
+      "expected": "https://example.com/contextYprefix/01/09506000134352"
+    },
+    {
+      "caseId": 207,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextYprefix"
+        }
+      },
+      "requestSha256": "f9c6836b6ba9519576d8e606de8140b5706a4cb6ae9b6d3e7689175f7d05a59a",
+      "expected": "https://example.com/contextYprefix/01/09506000134352"
+    },
+    {
+      "caseId": 208,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userYname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "9aefc98e5d052e7f1afe3a4de33ca30ccf9c4ae609fbf348b76a09041ad10d55",
+      "expected": "https://userYname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 209,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixYsuffix"
+      },
+      "requestSha256": "69d76c9caa578e115beb0662ace8b7aad32693978d641ffbb8f56473e58ac63c",
+      "expected": "https://example.com/01/09506000134352?x=prefixYsuffix"
+    },
+    {
+      "caseId": 210,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextZprefix/01/09506000134352"
+      },
+      "requestSha256": "c15a73eb7869742cda17c4783ef8e93b7d8faa3f2212cbecae4a9d55e932b107",
+      "expected": "https://example.com/contextZprefix/01/09506000134352"
+    },
+    {
+      "caseId": 211,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextZprefix"
+        }
+      },
+      "requestSha256": "7adb921b0c4471fbb4245657894703d62d53ed2a10667e6cb2e896efe4a77d7c",
+      "expected": "https://example.com/contextZprefix/01/09506000134352"
+    },
+    {
+      "caseId": 212,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userZname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "3dd1f5050b5f01aa4ebaf455124f0edaf88222f62ded2cbb53e12de956e7c345",
+      "expected": "https://userZname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 213,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixZsuffix"
+      },
+      "requestSha256": "3c06e25feb63dbfc938fd86ff550c6851edc51c684de33cea88ba446ffc778f8",
+      "expected": "https://example.com/01/09506000134352?x=prefixZsuffix"
+    },
+    {
+      "caseId": 214,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context[prefix/01/09506000134352"
+      },
+      "requestSha256": "a135530d8389ac59ae47cda749deedb4e4b34e4c48c559f447170d3d246eca56",
+      "expected": "https://example.com/context[prefix/01/09506000134352"
+    },
+    {
+      "caseId": 215,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context[prefix"
+        }
+      },
+      "requestSha256": "44d723dd4d65b6b445f6b854376c6fa47e0a79e41d9b92abcb737bd3c6bb31e3",
+      "expected": "https://example.com/context[prefix/01/09506000134352"
+    },
+    {
+      "caseId": 216,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user[name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "a7c8dde872381bd84a913965ecb2baad26b4605a3280186a910b2ca2171a8e65",
+      "expected": "https://user%5Bname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 217,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix[suffix"
+      },
+      "requestSha256": "7f64a3a227b3b18fafd3ef780e76fa913f06c0a96fe77ba1294daa2a636a7e43",
+      "expected": "https://example.com/01/09506000134352?x=prefix%5Bsuffix"
+    },
+    {
+      "caseId": 218,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context]prefix/01/09506000134352"
+      },
+      "requestSha256": "53777e92dfb515c818d8a17a29afd53745ed8ab3c2e134e41f16f80e9371ba5f",
+      "expected": "https://example.com/context]prefix/01/09506000134352"
+    },
+    {
+      "caseId": 219,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context]prefix"
+        }
+      },
+      "requestSha256": "8a4715188a5937a2102bd2128b25817d54ed91b2b9c6d4bbbe01c176645b3f12",
+      "expected": "https://example.com/context]prefix/01/09506000134352"
+    },
+    {
+      "caseId": 220,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user]name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "43628d56762b7357a1bba0b19267d762277a7fe2e9be992ce91dc45b26d62ba4",
+      "expected": "https://user%5Dname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 221,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix]suffix"
+      },
+      "requestSha256": "092267581450f153aaa8585d426f74ca25632a2c7c0978b87ae7def983e78521",
+      "expected": "https://example.com/01/09506000134352?x=prefix%5Dsuffix"
+    },
+    {
+      "caseId": 222,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context^prefix/01/09506000134352"
+      },
+      "requestSha256": "9b1b2853e71c2815deccce19f0121d26dddd019d6a2c8dfa06084fe417bf2156",
+      "expected": "https://example.com/context%5Eprefix/01/09506000134352"
+    },
+    {
+      "caseId": 223,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context^prefix"
+        }
+      },
+      "requestSha256": "2151383f3d6f53363d41c8fc4e8b7560ad92455c7e6a75fe21025c1e833f580a",
+      "expected": "https://example.com/context%5Eprefix/01/09506000134352"
+    },
+    {
+      "caseId": 224,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user^name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "a0bde35af53ef0293c8729bccf0ffc51968588983207158ef9537c3d441342b9",
+      "expected": "https://user%5Ename:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 225,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix^suffix"
+      },
+      "requestSha256": "666b1d0a49571b69155c266e4bff362a1d0daf8c262e09300382410027ecd310",
+      "expected": "https://example.com/01/09506000134352?x=prefix%5Esuffix"
+    },
+    {
+      "caseId": 226,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context_prefix/01/09506000134352"
+      },
+      "requestSha256": "caadcc788e2684ba5234262f0a8539cc8e3ff91f95df6f5eb4eea0abdad2f16f",
+      "expected": "https://example.com/context_prefix/01/09506000134352"
+    },
+    {
+      "caseId": 227,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context_prefix"
+        }
+      },
+      "requestSha256": "fffda38f637d3a955e5de9247566799056a4a3a066a8f9c0ef56107890f8542c",
+      "expected": "https://example.com/context_prefix/01/09506000134352"
+    },
+    {
+      "caseId": 228,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user_name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "553869f3e11959d4875c4a26d00420776deb1aaa59dc06fe33b53e363db6c8f7",
+      "expected": "https://user_name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 229,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix_suffix"
+      },
+      "requestSha256": "d693e1448fbe05a28da484bd9c129216fb72aa65cafa46cc75cdb850fea58adc",
+      "expected": "https://example.com/01/09506000134352?x=prefix_suffix"
+    },
+    {
+      "caseId": 230,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context`prefix/01/09506000134352"
+      },
+      "requestSha256": "49d12a0ef0bf2d538241bfd0acd122ab0b107c11edd201aa707b9fac418dd90f",
+      "expected": "https://example.com/context%60prefix/01/09506000134352"
+    },
+    {
+      "caseId": 231,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context`prefix"
+        }
+      },
+      "requestSha256": "ccb7d40da07b64c77d16f7052a76ef011d13c4c90cceccf5bae38b54270979c1",
+      "expected": "https://example.com/context%60prefix/01/09506000134352"
+    },
+    {
+      "caseId": 232,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user`name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "1218bad7c8c4c333cd5602fe874ad78856d113480650dd46f505aff8c7a3bcb2",
+      "expected": "https://user%60name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 233,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix`suffix"
+      },
+      "requestSha256": "61b12ba2a93ab6c87769aabb12da7e65d916dabba6b78de5bb6ab014b97714f7",
+      "expected": "https://example.com/01/09506000134352?x=prefix%60suffix"
+    },
+    {
+      "caseId": 234,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextaprefix/01/09506000134352"
+      },
+      "requestSha256": "f27fc3b068e6ee7e7f9d9ff19e1d398eb03b6788e6e162472739bdcb6560f67b",
+      "expected": "https://example.com/contextaprefix/01/09506000134352"
+    },
+    {
+      "caseId": 235,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextaprefix"
+        }
+      },
+      "requestSha256": "d1f9f20d71c1c826b53bda58ee901de7165ca8eddddec986ebaea2b0af49d0e6",
+      "expected": "https://example.com/contextaprefix/01/09506000134352"
+    },
+    {
+      "caseId": 236,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://useraname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "7369c154db621cde97da4bf86eb13b6cf8c6a78de1ed8aafcdc561e4a1d19cd0",
+      "expected": "https://useraname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 237,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixasuffix"
+      },
+      "requestSha256": "0c24e51034cd913e3075207c1c3549eba09e6c745f2e7e18393da910a0c21cb5",
+      "expected": "https://example.com/01/09506000134352?x=prefixasuffix"
+    },
+    {
+      "caseId": 238,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextbprefix/01/09506000134352"
+      },
+      "requestSha256": "a36fe0ae5ec7abf787dd8010eaefecb0718bb2a249b453f702d5afd37a048b9a",
+      "expected": "https://example.com/contextbprefix/01/09506000134352"
+    },
+    {
+      "caseId": 239,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextbprefix"
+        }
+      },
+      "requestSha256": "49581a10c967bfe5eaf0f9323afbed49c164863c188e67cb41474adebca865c9",
+      "expected": "https://example.com/contextbprefix/01/09506000134352"
+    },
+    {
+      "caseId": 240,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userbname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "967a17334213d8a84c344c3d7fea3f5b7acd6b3174c5b6feac0685dc8fa9ed74",
+      "expected": "https://userbname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 241,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixbsuffix"
+      },
+      "requestSha256": "9d85f09309d8bcc07c1ddd46a4031fb559b1e4a38c05328f5d006e3f07fc9957",
+      "expected": "https://example.com/01/09506000134352?x=prefixbsuffix"
+    },
+    {
+      "caseId": 242,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextcprefix/01/09506000134352"
+      },
+      "requestSha256": "958db68932a5d31fe17c7db0830072b6b12e52ac067bec09bc01b76ebe09e6b0",
+      "expected": "https://example.com/contextcprefix/01/09506000134352"
+    },
+    {
+      "caseId": 243,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextcprefix"
+        }
+      },
+      "requestSha256": "dedc84cacedbf90825cba6de9063f57dbd4bd887735168d77577b5b6f0d69c78",
+      "expected": "https://example.com/contextcprefix/01/09506000134352"
+    },
+    {
+      "caseId": 244,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://usercname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "be0b9edd522953cec8ad8492cbff5a40cee023e28ce67345579a3eacca9615f7",
+      "expected": "https://usercname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 245,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixcsuffix"
+      },
+      "requestSha256": "dcdf5b4f178185f777b21b563221604e585db8d603d22662357934b0341ca5cd",
+      "expected": "https://example.com/01/09506000134352?x=prefixcsuffix"
+    },
+    {
+      "caseId": 246,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextdprefix/01/09506000134352"
+      },
+      "requestSha256": "2b53752f564f19d1e8436d83359edd7f6eef5f9e48529291200ba7e8e82f7595",
+      "expected": "https://example.com/contextdprefix/01/09506000134352"
+    },
+    {
+      "caseId": 247,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextdprefix"
+        }
+      },
+      "requestSha256": "79e3a7fd54237200b17e289cee12a4ef43ecf9788531ccbd90e06d3e06198ea0",
+      "expected": "https://example.com/contextdprefix/01/09506000134352"
+    },
+    {
+      "caseId": 248,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userdname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "559188de21f305bc93a89ed383173d5989f97393fe17aead036b3f69b6b84984",
+      "expected": "https://userdname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 249,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixdsuffix"
+      },
+      "requestSha256": "a67ef8312694385c77f5770f0c4de82c3979bed76854284db12fda4476778584",
+      "expected": "https://example.com/01/09506000134352?x=prefixdsuffix"
+    },
+    {
+      "caseId": 250,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contexteprefix/01/09506000134352"
+      },
+      "requestSha256": "14a75e0ec8428a4f816f508ec46127f70704ed592fa75f04a7b6c9892a628243",
+      "expected": "https://example.com/contexteprefix/01/09506000134352"
+    },
+    {
+      "caseId": 251,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contexteprefix"
+        }
+      },
+      "requestSha256": "0ecdf5eeca6f1478899242f1235039a48d076e5338eaf118c1c14049b128979b",
+      "expected": "https://example.com/contexteprefix/01/09506000134352"
+    },
+    {
+      "caseId": 252,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userename:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "38002b129d7de6df94b300f486016c0cbb895e89f232d30116154fea54849979",
+      "expected": "https://userename:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 253,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixesuffix"
+      },
+      "requestSha256": "8791ee49df932860e3cfcc5db21bcaeecdd1aadb63e6ef2228642abf8f4e7182",
+      "expected": "https://example.com/01/09506000134352?x=prefixesuffix"
+    },
+    {
+      "caseId": 254,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextfprefix/01/09506000134352"
+      },
+      "requestSha256": "025aa2380fd60a556b6c7921890e4c312530159a917d66b8cd5f1ae489013922",
+      "expected": "https://example.com/contextfprefix/01/09506000134352"
+    },
+    {
+      "caseId": 255,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextfprefix"
+        }
+      },
+      "requestSha256": "ff3c5d35ce20c9b5d2086a480d8c78fee5c0872caa803c808097faeb454c0ff8",
+      "expected": "https://example.com/contextfprefix/01/09506000134352"
+    },
+    {
+      "caseId": 256,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userfname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "77a2249d692344700ae1002668449e908079d292f0a4a6fe5eb2ac93c9b88fd8",
+      "expected": "https://userfname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 257,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixfsuffix"
+      },
+      "requestSha256": "1ede65a1e072141dd52e73944cdaa53e50a180021987ea0e1bdd70d738c29630",
+      "expected": "https://example.com/01/09506000134352?x=prefixfsuffix"
+    },
+    {
+      "caseId": 258,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextgprefix/01/09506000134352"
+      },
+      "requestSha256": "c72dcb06af4800c425d7d7aaec79045f543737922ef65151c5f8e3367aac56fc",
+      "expected": "https://example.com/contextgprefix/01/09506000134352"
+    },
+    {
+      "caseId": 259,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextgprefix"
+        }
+      },
+      "requestSha256": "6862c5d31e3e6086f3d0ade1f74545bc41eb203c4723e4eb048a975c120eaac5",
+      "expected": "https://example.com/contextgprefix/01/09506000134352"
+    },
+    {
+      "caseId": 260,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://usergname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "fd4cf33e51232d719e4e7284ef9d0c2a61ea85fe365980ba873b1f2b5d03d086",
+      "expected": "https://usergname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 261,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixgsuffix"
+      },
+      "requestSha256": "5aa1733c14509e528f0809d373531016cf40562eab84da025cb5993e9aff476b",
+      "expected": "https://example.com/01/09506000134352?x=prefixgsuffix"
+    },
+    {
+      "caseId": 262,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contexthprefix/01/09506000134352"
+      },
+      "requestSha256": "17a31c2df5638e895d2884991dc38f221b9a1fb22e397da1e7efb4cb916015af",
+      "expected": "https://example.com/contexthprefix/01/09506000134352"
+    },
+    {
+      "caseId": 263,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contexthprefix"
+        }
+      },
+      "requestSha256": "0b799ed15d77c8df6b986ac04c51f7e471d43096d8cfb09e2d8f24f89eb8e841",
+      "expected": "https://example.com/contexthprefix/01/09506000134352"
+    },
+    {
+      "caseId": 264,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userhname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "4a28b465b9412af3b8a9bd0b7b3bdc20d651b2dad16ab9c6e0590a3757b00395",
+      "expected": "https://userhname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 265,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixhsuffix"
+      },
+      "requestSha256": "29fd91c47f550a51e4b25ff8dabad163af984dd7f28031b401edbef51cd09744",
+      "expected": "https://example.com/01/09506000134352?x=prefixhsuffix"
+    },
+    {
+      "caseId": 266,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextiprefix/01/09506000134352"
+      },
+      "requestSha256": "9208f1f74c309910feaeaf04f16cb9962ea2737c87913829bf91d00a2de11930",
+      "expected": "https://example.com/contextiprefix/01/09506000134352"
+    },
+    {
+      "caseId": 267,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextiprefix"
+        }
+      },
+      "requestSha256": "d2dd6dbe433c00cf3b8517ed921b12c4fb6e930e1b0d5a7328dfae1f7ccac6ec",
+      "expected": "https://example.com/contextiprefix/01/09506000134352"
+    },
+    {
+      "caseId": 268,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://useriname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "6c6843ba27a7b02588f7fe97d6fee023853c8d7515273833b8a97c897a8d2910",
+      "expected": "https://useriname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 269,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixisuffix"
+      },
+      "requestSha256": "f6c36a0287a9c16a0bf6473b3acb31b3778cc1abfcc6ecb2155528f36522e751",
+      "expected": "https://example.com/01/09506000134352?x=prefixisuffix"
+    },
+    {
+      "caseId": 270,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextjprefix/01/09506000134352"
+      },
+      "requestSha256": "00bbe7204be6bc494da2ccad8c4ad79c1e6610de6d69c2276fa33688720ded1c",
+      "expected": "https://example.com/contextjprefix/01/09506000134352"
+    },
+    {
+      "caseId": 271,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextjprefix"
+        }
+      },
+      "requestSha256": "4eb41651724b5ffe7ff814c4d53dcdf1cf16e292ae90f3d68c5138f43f4d94e6",
+      "expected": "https://example.com/contextjprefix/01/09506000134352"
+    },
+    {
+      "caseId": 272,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userjname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "60fd6e5d5b9cd7cd68eccbdbfc88960efbb7ecd3c9bedf05313ad71b892a2ee0",
+      "expected": "https://userjname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 273,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixjsuffix"
+      },
+      "requestSha256": "047ccc82fa7d6807a05750398caf1befdbb74f7f2a32f8dc4f267781ca7e6819",
+      "expected": "https://example.com/01/09506000134352?x=prefixjsuffix"
+    },
+    {
+      "caseId": 274,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextkprefix/01/09506000134352"
+      },
+      "requestSha256": "3be84e35530c994f15817257917b19a0dc9546bd3d188f9cf2c22919e0795e0f",
+      "expected": "https://example.com/contextkprefix/01/09506000134352"
+    },
+    {
+      "caseId": 275,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextkprefix"
+        }
+      },
+      "requestSha256": "f71eba39c57a2f9ad634993228e953c30314d65790ea73ef9e8e2448e8b5f98b",
+      "expected": "https://example.com/contextkprefix/01/09506000134352"
+    },
+    {
+      "caseId": 276,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userkname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "8e9c054761e00365dbad4bd00be2d22dcaa3c993997434f9dac6dce03f5a2770",
+      "expected": "https://userkname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 277,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixksuffix"
+      },
+      "requestSha256": "39bcb04501092fb0c7af71be93b3d312b676696d61686543179ca10aa7175b53",
+      "expected": "https://example.com/01/09506000134352?x=prefixksuffix"
+    },
+    {
+      "caseId": 278,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextlprefix/01/09506000134352"
+      },
+      "requestSha256": "65e141ab35a6019bb4a7138803c7545058a98c5a2ca75e34a063aa03562ab5e5",
+      "expected": "https://example.com/contextlprefix/01/09506000134352"
+    },
+    {
+      "caseId": 279,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextlprefix"
+        }
+      },
+      "requestSha256": "a38cef94bc484bebc8d982de54d144528746c0b9bb5ea6b17f7c518f38325274",
+      "expected": "https://example.com/contextlprefix/01/09506000134352"
+    },
+    {
+      "caseId": 280,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userlname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "4f4fb5a3af0d7db6df61b88a02e2117287502c99f19709cf52b6f68c30d9ec32",
+      "expected": "https://userlname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 281,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixlsuffix"
+      },
+      "requestSha256": "9691b69cfbd6d1b23b60a692f6baf6fbf8bc1de05da4ce153ef751cf80d1904f",
+      "expected": "https://example.com/01/09506000134352?x=prefixlsuffix"
+    },
+    {
+      "caseId": 282,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextmprefix/01/09506000134352"
+      },
+      "requestSha256": "485d737be1659d5a2ef6b02a418b9924d9043d48d3c5773df312aa9a44c52118",
+      "expected": "https://example.com/contextmprefix/01/09506000134352"
+    },
+    {
+      "caseId": 283,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextmprefix"
+        }
+      },
+      "requestSha256": "0080d9088acaf30f2cda71b175028f12807d15bd1c2f608dfde4bd243e468248",
+      "expected": "https://example.com/contextmprefix/01/09506000134352"
+    },
+    {
+      "caseId": 284,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://usermname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "d9beb276b63df2061aa9cd6ceef020bc4720bed872840ee2dd5973add0afa5e4",
+      "expected": "https://usermname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 285,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixmsuffix"
+      },
+      "requestSha256": "6eb2e6fe306bb521510a2bdf19a54f8c58b6bed618ddc5e249ee895230dfa557",
+      "expected": "https://example.com/01/09506000134352?x=prefixmsuffix"
+    },
+    {
+      "caseId": 286,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextnprefix/01/09506000134352"
+      },
+      "requestSha256": "210be6e0edd2603e1c42d109eecf148547263b20a3ea537350cbc11368cc9891",
+      "expected": "https://example.com/contextnprefix/01/09506000134352"
+    },
+    {
+      "caseId": 287,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextnprefix"
+        }
+      },
+      "requestSha256": "ceac10ccd1e1d60be7093b31470248dfb32c2ea815ea8cbcb149ac21f30b5627",
+      "expected": "https://example.com/contextnprefix/01/09506000134352"
+    },
+    {
+      "caseId": 288,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://usernname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "5d50da8e6dbe287bf194879ac6d20fab1bbc466cf5a4f9638be900904dd55a1c",
+      "expected": "https://usernname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 289,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixnsuffix"
+      },
+      "requestSha256": "3d782f734da5c498dcfdb37fb32d8a1cb2d5eb3bedeca20eb17dd34d16824d58",
+      "expected": "https://example.com/01/09506000134352?x=prefixnsuffix"
+    },
+    {
+      "caseId": 290,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextoprefix/01/09506000134352"
+      },
+      "requestSha256": "dcad737787966c8e4ae302dcc0d9e9082e621c0661daf7332f820d5b781a2394",
+      "expected": "https://example.com/contextoprefix/01/09506000134352"
+    },
+    {
+      "caseId": 291,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextoprefix"
+        }
+      },
+      "requestSha256": "e8857246bb775a5d109aab8c9df7a5dfb939a4dde44d44199233d0e6f3d05593",
+      "expected": "https://example.com/contextoprefix/01/09506000134352"
+    },
+    {
+      "caseId": 292,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://useroname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "4ece7f657c9ec1185e48cff64ea204a7dd2960b0e49ea9391f94919cf0e114ca",
+      "expected": "https://useroname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 293,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixosuffix"
+      },
+      "requestSha256": "0dee9ac2b23594f94056efb08f580ebe6b70f573e6183c96272b0b952c5c33f8",
+      "expected": "https://example.com/01/09506000134352?x=prefixosuffix"
+    },
+    {
+      "caseId": 294,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextpprefix/01/09506000134352"
+      },
+      "requestSha256": "450d39e51e601019b851de68d68918c8a079d50a99fc2bb4f5a367827279f4d3",
+      "expected": "https://example.com/contextpprefix/01/09506000134352"
+    },
+    {
+      "caseId": 295,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextpprefix"
+        }
+      },
+      "requestSha256": "4cc13e9962812503410f224ad463a1f72fa07ba45a1d42e35e2ca967f41110e1",
+      "expected": "https://example.com/contextpprefix/01/09506000134352"
+    },
+    {
+      "caseId": 296,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userpname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "4c872b1bc423bd41e22689465d9c1cf73e4cacd43d2817d1db85f7c3e092b7ce",
+      "expected": "https://userpname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 297,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixpsuffix"
+      },
+      "requestSha256": "7b0f902db7e1102213ff816604cd2d7e3a28fca4b95b97abfcd7103f293d6408",
+      "expected": "https://example.com/01/09506000134352?x=prefixpsuffix"
+    },
+    {
+      "caseId": 298,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextqprefix/01/09506000134352"
+      },
+      "requestSha256": "5e831aac931c2ff11fb622d3e9b61f52fa2abe73e6e478b360c7680868766dde",
+      "expected": "https://example.com/contextqprefix/01/09506000134352"
+    },
+    {
+      "caseId": 299,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextqprefix"
+        }
+      },
+      "requestSha256": "7e85b690d3a7d5d32af47c20cf5d23861cdf4e0a50f8e4092e9e81273c2ebc44",
+      "expected": "https://example.com/contextqprefix/01/09506000134352"
+    },
+    {
+      "caseId": 300,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userqname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "6bad543be940630a98f8ac79e79617c759b01f1e66b21645b47aac1039f000d7",
+      "expected": "https://userqname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 301,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixqsuffix"
+      },
+      "requestSha256": "5d7924e3334fe6d68f00b4d6116477ff3c9d43292559c68a99e9476511158121",
+      "expected": "https://example.com/01/09506000134352?x=prefixqsuffix"
+    },
+    {
+      "caseId": 302,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextrprefix/01/09506000134352"
+      },
+      "requestSha256": "dccc97ca08872e6831d7a6525dab5aaefbb08c3d8d327f367a1c982397b95a7c",
+      "expected": "https://example.com/contextrprefix/01/09506000134352"
+    },
+    {
+      "caseId": 303,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextrprefix"
+        }
+      },
+      "requestSha256": "c8a42400d6a76d0d01db03acbcb50453338abb380eced01234a42012f40914d1",
+      "expected": "https://example.com/contextrprefix/01/09506000134352"
+    },
+    {
+      "caseId": 304,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userrname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "193ad7f144f66e7065a7897e26130a00916247a0eb05b4df31647de44f41d714",
+      "expected": "https://userrname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 305,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixrsuffix"
+      },
+      "requestSha256": "decc4dcd6391bd8855f30565f1b2bb5d27a6c9e2a953110d74c7775564894710",
+      "expected": "https://example.com/01/09506000134352?x=prefixrsuffix"
+    },
+    {
+      "caseId": 306,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextsprefix/01/09506000134352"
+      },
+      "requestSha256": "f3a7a0164e8a8c70ecd57825c0b5b5dbccd84536efc46f2fbb62907b638ceabb",
+      "expected": "https://example.com/contextsprefix/01/09506000134352"
+    },
+    {
+      "caseId": 307,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextsprefix"
+        }
+      },
+      "requestSha256": "c78118ca75c4bcbd8d3c379d9ff229b8dbd7d7eefd5f94e726ee54821051deff",
+      "expected": "https://example.com/contextsprefix/01/09506000134352"
+    },
+    {
+      "caseId": 308,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://usersname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "0dce8214b50e494b9b4227b7c9d2f0558eeeb61850ffcc0662d4d1975b15a193",
+      "expected": "https://usersname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 309,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixssuffix"
+      },
+      "requestSha256": "bc4853f706973ef8677d7402571d1665af921ef61a2af717983651e03cabc2cf",
+      "expected": "https://example.com/01/09506000134352?x=prefixssuffix"
+    },
+    {
+      "caseId": 310,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contexttprefix/01/09506000134352"
+      },
+      "requestSha256": "014b685b6476376ec6a7c48a1b795bd2c866ac1ff3cacae72eb665f83df4cc32",
+      "expected": "https://example.com/contexttprefix/01/09506000134352"
+    },
+    {
+      "caseId": 311,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contexttprefix"
+        }
+      },
+      "requestSha256": "f29b71ada4a99a49f783603b7002570d86c485d544055428053f0d09956de99d",
+      "expected": "https://example.com/contexttprefix/01/09506000134352"
+    },
+    {
+      "caseId": 312,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://usertname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "addf2f906d1c6723c41037ec453f9b62bc787ef0bc53d3589c27b7805fa30da0",
+      "expected": "https://usertname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 313,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixtsuffix"
+      },
+      "requestSha256": "8586012214eb3c4d675ad8d156891a88f8e8c00a163fac77b52e3b825fd5155c",
+      "expected": "https://example.com/01/09506000134352?x=prefixtsuffix"
+    },
+    {
+      "caseId": 314,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextuprefix/01/09506000134352"
+      },
+      "requestSha256": "3fcc5246bd84efacc8e7c53533e7bdd66fde4fe9cbe30dd5e9e18a94980dcf26",
+      "expected": "https://example.com/contextuprefix/01/09506000134352"
+    },
+    {
+      "caseId": 315,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextuprefix"
+        }
+      },
+      "requestSha256": "9b164c0a5837e5c1ef6fd1c48ad824e99c7c519294ae123abb1f67348a07d267",
+      "expected": "https://example.com/contextuprefix/01/09506000134352"
+    },
+    {
+      "caseId": 316,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://useruname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "f831952f7dbb0654b9a356ef2e08fe816d01090d6f013b962a060c388b4b5e3c",
+      "expected": "https://useruname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 317,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixusuffix"
+      },
+      "requestSha256": "7fdbfce2fed01fd517ae8b72318c68826c6f976fa8f91a041e6628d06b9de625",
+      "expected": "https://example.com/01/09506000134352?x=prefixusuffix"
+    },
+    {
+      "caseId": 318,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextvprefix/01/09506000134352"
+      },
+      "requestSha256": "02c8aba0cab21c723c223f5c45a9fbb018837179ed48ed68bc9e6a5012f926d4",
+      "expected": "https://example.com/contextvprefix/01/09506000134352"
+    },
+    {
+      "caseId": 319,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextvprefix"
+        }
+      },
+      "requestSha256": "d3bf172fecb5859ea2a5dc07349b2001bcc91fcfa06a925d2bc478a02a0b6a23",
+      "expected": "https://example.com/contextvprefix/01/09506000134352"
+    },
+    {
+      "caseId": 320,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://uservname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "77973085aeaffed66dfbb74ee3e699222990ba98e548f35f5f55c40f1011c54f",
+      "expected": "https://uservname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 321,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixvsuffix"
+      },
+      "requestSha256": "6d5fed3dc056787160cbddb26cb726d72b373f01fbb15d567fd090548fa32c94",
+      "expected": "https://example.com/01/09506000134352?x=prefixvsuffix"
+    },
+    {
+      "caseId": 322,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextwprefix/01/09506000134352"
+      },
+      "requestSha256": "79d0eb7fa0786717873582e1f2a2ae61112d9231f5e29d92499627d62422bb8b",
+      "expected": "https://example.com/contextwprefix/01/09506000134352"
+    },
+    {
+      "caseId": 323,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextwprefix"
+        }
+      },
+      "requestSha256": "d1b835cc64dfe48cd99f208fe8249fa0436afac2c338c26b7877555f985d265e",
+      "expected": "https://example.com/contextwprefix/01/09506000134352"
+    },
+    {
+      "caseId": 324,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userwname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "bc053116a9394b7163b8628769ff4c3d662a868df2a853b1abd95478c542e346",
+      "expected": "https://userwname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 325,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixwsuffix"
+      },
+      "requestSha256": "9f837e6748eff0413dd4b10c694262fdb14d79b532b3e8d7e7c7ca798f0612e4",
+      "expected": "https://example.com/01/09506000134352?x=prefixwsuffix"
+    },
+    {
+      "caseId": 326,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextxprefix/01/09506000134352"
+      },
+      "requestSha256": "14d3228f0677759cb85bdf5d4ebca24defaab84c1487948b3b28c1f3ea8fa32b",
+      "expected": "https://example.com/contextxprefix/01/09506000134352"
+    },
+    {
+      "caseId": 327,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextxprefix"
+        }
+      },
+      "requestSha256": "1519f53117089b6c76b63ebff5354b1bca2586751ebaa5f605502cad80319f87",
+      "expected": "https://example.com/contextxprefix/01/09506000134352"
+    },
+    {
+      "caseId": 328,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userxname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "7a9b60191b7de6b5c748c1e34134881d28c136e51704dca957eea67ad544423d",
+      "expected": "https://userxname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 329,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixxsuffix"
+      },
+      "requestSha256": "767260eec2f9cbaadda719ff9ff536d5763df53d7c9b2e69dce717a346d4c855",
+      "expected": "https://example.com/01/09506000134352?x=prefixxsuffix"
+    },
+    {
+      "caseId": 330,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextyprefix/01/09506000134352"
+      },
+      "requestSha256": "8f921aee9695d613bd84ae35c2e3b9db6f5ee725ab4565bf9efa7715f0a1ae43",
+      "expected": "https://example.com/contextyprefix/01/09506000134352"
+    },
+    {
+      "caseId": 331,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextyprefix"
+        }
+      },
+      "requestSha256": "a9d70b46b56d527155d774ba9aa9479c4956f558452c9d0d2d3cce75899cb0fb",
+      "expected": "https://example.com/contextyprefix/01/09506000134352"
+    },
+    {
+      "caseId": 332,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://useryname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "ea14c8d8320b489b12a79bf926dcf53cb18b43d9cb9d16f7c4c805bceec41b5d",
+      "expected": "https://useryname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 333,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixysuffix"
+      },
+      "requestSha256": "c1772772e9a361a3d7d5f79d203d6cc97376509abb1284d2a70606f1f8c18b5a",
+      "expected": "https://example.com/01/09506000134352?x=prefixysuffix"
+    },
+    {
+      "caseId": 334,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/contextzprefix/01/09506000134352"
+      },
+      "requestSha256": "d912ebf9268793d7d93610a96fd22814de8ba154d1813db18425dfe7f56453c5",
+      "expected": "https://example.com/contextzprefix/01/09506000134352"
+    },
+    {
+      "caseId": 335,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/contextzprefix"
+        }
+      },
+      "requestSha256": "a9dee87309558ea198c3da34499868d82923cca1136f7007dd527d6b0208e660",
+      "expected": "https://example.com/contextzprefix/01/09506000134352"
+    },
+    {
+      "caseId": 336,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://userzname:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "41628b28c91ffc2dc0f4d8f103e622af4c9e581b191685dcb28ab602740f72e8",
+      "expected": "https://userzname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 337,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefixzsuffix"
+      },
+      "requestSha256": "37939019ba605359eee571e1e8fb7eff2edf8982b56a46ca6f8e68e753deaa1b",
+      "expected": "https://example.com/01/09506000134352?x=prefixzsuffix"
+    },
+    {
+      "caseId": 338,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context{prefix/01/09506000134352"
+      },
+      "requestSha256": "b15b7af545c911cd24f1c2c6670c4198d535c2ffe4da24f6585ab8bdb2afc64b",
+      "expected": "https://example.com/context%7Bprefix/01/09506000134352"
+    },
+    {
+      "caseId": 339,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context{prefix"
+        }
+      },
+      "requestSha256": "e54f31ba0e89e6c5a549c1ba5eb72b766025a3c2dc641ba97c79444b1e384c03",
+      "expected": "https://example.com/context%7Bprefix/01/09506000134352"
+    },
+    {
+      "caseId": 340,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user{name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "466b49a03b827b871e8dfcb750f574069e8faa5a4c178f03d95713dd9c54bb16",
+      "expected": "https://user%7Bname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 341,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix{suffix"
+      },
+      "requestSha256": "2cd481619a128619154d093e6ef583ebabb3e01d0fcec8671dd7e0ab7efcb906",
+      "expected": "https://example.com/01/09506000134352?x=prefix%7Bsuffix"
+    },
+    {
+      "caseId": 342,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context|prefix/01/09506000134352"
+      },
+      "requestSha256": "e62ffb4fc2bd9b02187d6e08a05b7f1ea6fd20cb14944fd53992c280e1215e51",
+      "expected": "https://example.com/context|prefix/01/09506000134352"
+    },
+    {
+      "caseId": 343,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context|prefix"
+        }
+      },
+      "requestSha256": "ea7e12fe2541a693c5014bf59581f0f5b1eef139331edd8a4bde5943db153664",
+      "expected": "https://example.com/context|prefix/01/09506000134352"
+    },
+    {
+      "caseId": 344,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user|name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "6ccde12341398ef55f7a9db0b1267bc1c090ee331028637038eb78bbdd84462c",
+      "expected": "https://user%7Cname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 345,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix|suffix"
+      },
+      "requestSha256": "948fa836347fdf9cbfe949c78378c0ae202c1086908d0be246e76cd7555af0a8",
+      "expected": "https://example.com/01/09506000134352?x=prefix%7Csuffix"
+    },
+    {
+      "caseId": 346,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context}prefix/01/09506000134352"
+      },
+      "requestSha256": "ef0ba556033a8ff95069369dfa9396824c75f121a801231a37aa4a886d9c617c",
+      "expected": "https://example.com/context%7Dprefix/01/09506000134352"
+    },
+    {
+      "caseId": 347,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context}prefix"
+        }
+      },
+      "requestSha256": "7c6eb26e1e4341ff85e148c85ed83844fc6ae3cd149bb1e02ebd90d98a217974",
+      "expected": "https://example.com/context%7Dprefix/01/09506000134352"
+    },
+    {
+      "caseId": 348,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user}name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "60864b2009012cf05392b693cebafddd606a1e98b94fbec9a4990e3021d15d84",
+      "expected": "https://user%7Dname:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 349,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix}suffix"
+      },
+      "requestSha256": "e13c21defbdd8980cb9a810321e21ecbfc07051da02cd31ccd22df5c76470f74",
+      "expected": "https://example.com/01/09506000134352?x=prefix%7Dsuffix"
+    },
+    {
+      "caseId": 350,
+      "category": "path-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/context~prefix/01/09506000134352"
+      },
+      "requestSha256": "b06338aaadf20478d9c00073efa25ffd895a5688c3836c96df34ef8f42358164",
+      "expected": "https://example.com/context~prefix/01/09506000134352"
+    },
+    {
+      "caseId": 351,
+      "category": "base-path-ascii",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "09506000134352"
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com/context~prefix"
+        }
+      },
+      "requestSha256": "dafe07c75d04d0b51ba00e4b096caab0debff0026aa647ba9c02b4d1f367d91b",
+      "expected": "https://example.com/context~prefix/01/09506000134352"
+    },
+    {
+      "caseId": 352,
+      "category": "userinfo-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://user~name:pass@example.com/01/09506000134352"
+      },
+      "requestSha256": "75e7a14474b3a1937740cfeb2bba0aa0906307e4469a241745a44399fc7c697a",
+      "expected": "https://user~name:pass@example.com/01/09506000134352"
+    },
+    {
+      "caseId": 353,
+      "category": "query-ascii",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://example.com/01/09506000134352?x=prefix~suffix"
+      },
+      "requestSha256": "d780eb5c55d53ecbc1fabe211d43a0fa211d14bbbbe01e6648c0b277d148f16d",
+      "expected": "https://example.com/01/09506000134352?x=prefix%7Esuffix"
+    },
+    {
+      "caseId": 354,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0/01/09506000134352"
+      },
+      "requestSha256": "9f5f4b6b72f6a6d217edfbde264deaf337321a124be5c766b0ad53d0e51ef208",
+      "expected": "https://0.0.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 355,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0x0/01/09506000134352"
+      },
+      "requestSha256": "4fb5251e63f325369a1ce9654e858d63ba281bf2d6f2c568d30453587fe52ca1",
+      "expected": "https://0.0.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 356,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://00/01/09506000134352"
+      },
+      "requestSha256": "127e34f0ae802840488b1cd2bb471d47fc6c38bd561aa2ac2c37bce3d0a71f1d",
+      "expected": "https://0.0.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 357,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://1/01/09506000134352"
+      },
+      "requestSha256": "273e74079040c67920bc6307fd82a0cffee5506cf50e2f886b8cfe9c661873eb",
+      "expected": "https://0.0.0.1/01/09506000134352"
+    },
+    {
+      "caseId": 358,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0x1/01/09506000134352"
+      },
+      "requestSha256": "afae99e869f6bde01c8e0b4227368c0e7a37675b0b33b2375a9086028e2d666a",
+      "expected": "https://0.0.0.1/01/09506000134352"
+    },
+    {
+      "caseId": 359,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://01/01/09506000134352"
+      },
+      "requestSha256": "f9abe7cda48efc3c8939c7a73e0ad8b580f41a496f7bfc68eefefdae228c5700",
+      "expected": "https://0.0.0.1/01/09506000134352"
+    },
+    {
+      "caseId": 360,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://127/01/09506000134352"
+      },
+      "requestSha256": "6a4d9c724486fbcb031f7a3733f719adcf31d8f66d83347ac10b6cb8534a9e0a",
+      "expected": "https://0.0.0.127/01/09506000134352"
+    },
+    {
+      "caseId": 361,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0x7f/01/09506000134352"
+      },
+      "requestSha256": "0c80aa7c4d34f065814118115165c21aa8cbdc3efd90d0efa7817bec4833e45e",
+      "expected": "https://0.0.0.127/01/09506000134352"
+    },
+    {
+      "caseId": 362,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0177/01/09506000134352"
+      },
+      "requestSha256": "e837c40fea433314f1e9953b46845b8ca14938ce187363e82735e3f2cb1dc6d8",
+      "expected": "https://0.0.0.127/01/09506000134352"
+    },
+    {
+      "caseId": 363,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://255/01/09506000134352"
+      },
+      "requestSha256": "c3320c70e744b473b09779bc276c79b05b9973e0b3ffa9a15dad3c0a5874f052",
+      "expected": "https://0.0.0.255/01/09506000134352"
+    },
+    {
+      "caseId": 364,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0xff/01/09506000134352"
+      },
+      "requestSha256": "db29db481a2f06b8c5a3cfbe78c473f0ea7eb91c248f519f201c3f5e42e57783",
+      "expected": "https://0.0.0.255/01/09506000134352"
+    },
+    {
+      "caseId": 365,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0377/01/09506000134352"
+      },
+      "requestSha256": "e3e9408f8dbc7c3e4bcf82f8db2e50e7b93254576b8db06daf9013deb2e053b6",
+      "expected": "https://0.0.0.255/01/09506000134352"
+    },
+    {
+      "caseId": 366,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://256/01/09506000134352"
+      },
+      "requestSha256": "b95d234d09f1c3d884cf10bfe8216e0c42769cec87374afd251b2683b40cc76b",
+      "expected": "https://0.0.1.0/01/09506000134352"
+    },
+    {
+      "caseId": 367,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0x100/01/09506000134352"
+      },
+      "requestSha256": "69c30fe91c31fc162a8b7e694237688f370da367851348414f8102e69e81aa75",
+      "expected": "https://0.0.1.0/01/09506000134352"
+    },
+    {
+      "caseId": 368,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0400/01/09506000134352"
+      },
+      "requestSha256": "12b5934f87999ea24c65f5cd2ff319d91849ca942009e9348528ff0733924ae4",
+      "expected": "https://0.0.1.0/01/09506000134352"
+    },
+    {
+      "caseId": 369,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://65535/01/09506000134352"
+      },
+      "requestSha256": "3f42dcbd50b5cb91a779f7947b098b250faac44d11a3e17e1e05563847ef3e0e",
+      "expected": "https://0.0.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 370,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0xffff/01/09506000134352"
+      },
+      "requestSha256": "bb6a3b87d2c6477471e5f874945b98999027671341ef67d02747a0780c70ad8a",
+      "expected": "https://0.0.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 371,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0177777/01/09506000134352"
+      },
+      "requestSha256": "c92a41dd83030dbb7da9098c4360870ed4c02d4ef0b3585a4560aeab740b4f58",
+      "expected": "https://0.0.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 372,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://65536/01/09506000134352"
+      },
+      "requestSha256": "8c50d9adf3107fb8c0d62fd9bc8bb03215dd7a60431a468c2e606c75f0c5d4e3",
+      "expected": "https://0.1.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 373,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0x10000/01/09506000134352"
+      },
+      "requestSha256": "fd7efe620580cabd304dfaa716d2178d60899996907a59427ef8d5710639a7af",
+      "expected": "https://0.1.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 374,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0200000/01/09506000134352"
+      },
+      "requestSha256": "2123214ccaf722144e997d2b37e451bc6aef746b7c0ead25dcf552af3ee09626",
+      "expected": "https://0.1.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 375,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://16777215/01/09506000134352"
+      },
+      "requestSha256": "649343acca2fbbdc528f5bc064a22f7ce72d9da3b4ac577ade8782a271802b65",
+      "expected": "https://0.255.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 376,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0xffffff/01/09506000134352"
+      },
+      "requestSha256": "4990938c05ab80da89c66bc8489eafedadd6a257fa217714b412bd28e9543fbe",
+      "expected": "https://0.255.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 377,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://077777777/01/09506000134352"
+      },
+      "requestSha256": "110bce4cbe3118ccc977e292adb6967a3d9b2d400c95d69378541a352d48b0fe",
+      "expected": "https://0.255.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 378,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://16777216/01/09506000134352"
+      },
+      "requestSha256": "42b88fd05e8ebe05c7e35b9eaae697de64cf01baf3ec0c53cdc05c51c677b8b4",
+      "expected": "https://1.0.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 379,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0x1000000/01/09506000134352"
+      },
+      "requestSha256": "e10da24ce59356ee3e9a2bd1fe3dc2355a95ff843c00ad2cdf9d31ab2c046675",
+      "expected": "https://1.0.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 380,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0100000000/01/09506000134352"
+      },
+      "requestSha256": "cc62854295ca6c89bc65342d145ef61d45983ee282ac166347054afcee233578",
+      "expected": "https://1.0.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 381,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://2147483647/01/09506000134352"
+      },
+      "requestSha256": "bd5f69c9359a1e18b79dcac3340fe6e560f8c3def1fa94f5dccf151bb1f9cde5",
+      "expected": "https://127.255.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 382,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0x7fffffff/01/09506000134352"
+      },
+      "requestSha256": "297f3d4ad1a44174a9e3b414960e9dc90dde8cd75e74bda471f2af77757a336f",
+      "expected": "https://127.255.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 383,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://017777777777/01/09506000134352"
+      },
+      "requestSha256": "27ea57d68b742f697fcc8c70be633f27302889c4fd4ba0e7b4590805f38c0a01",
+      "expected": "https://127.255.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 384,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://2147483648/01/09506000134352"
+      },
+      "requestSha256": "1f7beab24ce7fb86ee72b0623324d76f8d5f4699ef9671e3eece0715e0e1115d",
+      "expected": "https://128.0.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 385,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0x80000000/01/09506000134352"
+      },
+      "requestSha256": "f1d8ba850d7c76affdf0e50a89680d2c67d9b0fc1757100487fb7c870f135f9d",
+      "expected": "https://128.0.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 386,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://020000000000/01/09506000134352"
+      },
+      "requestSha256": "2588ae8d23654784c1a9d18d7840bfe9134d84de6ee722052279f252079038b7",
+      "expected": "https://128.0.0.0/01/09506000134352"
+    },
+    {
+      "caseId": 387,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://4294967295/01/09506000134352"
+      },
+      "requestSha256": "3b54fe12a028d850f67d06d513bda90515cf9b82783f1dc3b6636cbcb4744a1b",
+      "expected": "https://255.255.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 388,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://0xffffffff/01/09506000134352"
+      },
+      "requestSha256": "6f74df917231602aaacb78abb065ec220b20f104a76ffdc5d6f89a4b9b112e68",
+      "expected": "https://255.255.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 389,
+      "category": "numeric-ipv4-boundaries",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://037777777777/01/09506000134352"
+      },
+      "requestSha256": "72e05ed90602176e94e5640100c45f83765bda82d1ce604a744b6f71f7010ad0",
+      "expected": "https://255.255.255.255/01/09506000134352"
+    },
+    {
+      "caseId": 390,
+      "category": "ipv6-zero-ties",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://[0:0:0:0:0:0:0:0]/01/09506000134352"
+      },
+      "requestSha256": "8e80f7dd5dc4c17f9933d73f546cd47c583cf04b35b864d214e4a344ba8ee31b",
+      "expected": "https://[::]/01/09506000134352"
+    },
+    {
+      "caseId": 391,
+      "category": "ipv6-zero-ties",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://[1:0:0:2:0:0:3:4]/01/09506000134352"
+      },
+      "requestSha256": "f915603dfc117160483b400cae93193a1c5e063d22c2b8b49c77fa490ca0daeb",
+      "expected": "https://[1::2:0:0:3:4]/01/09506000134352"
+    },
+    {
+      "caseId": 392,
+      "category": "ipv6-zero-ties",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://[0:0:1:0:0:2:0:0]/01/09506000134352"
+      },
+      "requestSha256": "6f9f855142d72d7f47ff45140aec430e8e02dba4b84c1d4940badc9562803157",
+      "expected": "https://[::1:0:0:2:0:0]/01/09506000134352"
+    },
+    {
+      "caseId": 393,
+      "category": "ipv6-zero-ties",
+      "request": {
+        "op": "linkNormalize",
+        "input": "https://[::ffff:192.0.2.1]/01/09506000134352"
+      },
+      "requestSha256": "d548d73b421fab7f3fe626f6a6daa6bd30b7263ba19f4a8e92bef6974e4678af",
+      "expected": "https://[::ffff:c000:201]/01/09506000134352"
+    }
+  ],
+  "oracleInputSha256": "e050c007ee73ec73cf6bbf698921550e95f44f45fe8fa8dd0dc41028eeda7d35"
+}

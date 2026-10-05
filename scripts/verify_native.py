@@ -36,6 +36,7 @@ def main():
     require(text.count('[OK]')==count and '[FAILED]' not in text and '[SKIPPED]' not in text,test+' unit suite incomplete');lane['unitGroups'][test]=count
    bridge=compile(ROOT/'scripts/bridge.nim','bridge');runtime=strict_json(run([bridge,'--runtime'],label+'/runtime',stderr_empty=True));require(runtime=={'nim':a.expect_version,'os':'linux','arch':'amd64','wordSize':64},'Unexpected native runtime');lane['runtime']=runtime
    run([sys.executable,ROOT/'scripts/verify_reference.py','--binary',bridge,'--output',dest/'reference.json'],label+'/reference',stderr_empty=True)
+   run([sys.executable,ROOT/'scripts/verify_gs1.py','--binary',bridge,'--output',dest/'gs1.json'],label+'/gs1',stderr_empty=True)
    run([sys.executable,ROOT/'scripts/verify_negative.py','--binary',bridge,'--output',dest/'negative.json'],label+'/negative',stderr_empty=True)
    cli=compile(ROOT/'src/specqr_cli.nim','specqr_cli');run([sys.executable,ROOT/'scripts/verify_cli.py','--binary',cli,'--output',dest/'cli'],label+'/cli',stderr_empty=True)
    lane['status']='passed';require(verify(ROOT)==initial,'Source changed during lane')

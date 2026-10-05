@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "scope": "Only exact intentional exceptions to current-ts-gs1-shared49.json. No malformed input changes acceptance.",
+  "currentTsFixture": "current-ts-gs1-shared49.json",
+  "currentTsFixtureSha256": "a7d568cb2a63ff28695b132c1028c8d7ca898cca0e813316ff6b454fecc447e1",
+  "nativeOracle": {
+    "repository": "https://github.com/SpecQR/SpecQR-Nim",
+    "commit": "4f9154664d35a24cecb30b75cfdba0a9f16ced3e",
+    "tree": "e4d34c4c501d09c4e2d12ad953522ff935ae43ea",
+    "source": "src/specqr/gs1.nim",
+    "sourceSha256": "9df6a11927f265108e4d01e3321a208e1bcd4f9c484ff6aad5f9b8bd42734fa3",
+    "toolchain": "Nim 2.2.12 C backend",
+    "oracleHarnessSha256": "afc339622062ed1b0e58f5b4b2b327e69a173e48fd1cb5a71c576c571ccd273c",
+    "oracleOutputSha256": "ce612ac36f99d1d4964e9266984e48b8adcc4d5610c710b19ba91cabfa368dae"
+  },
+  "nativeOracleInputSha256": "ac86aec6732ecca6e27e4c3b952b58c36efc5446d953f0e500218d8ccc70cca4",
+  "nativeOracleOutputSha256": "07302448d619801b62dfcded8866a02f480325c2127da2aceaa9f43d1c35455c",
+  "caseCount": 3,
+  "categoryCounts": {
+    "diagnostic-only": 1,
+    "rejected-to-accepted-safe-dot-query": 2
+  },
+  "cases": [
+    {
+      "id": "bare-hex-ipv4-4:linkValidate",
+      "category": "diagnostic-only",
+      "request": {
+        "op": "linkValidate",
+        "input": "https://example.0x/01/09506000134352"
+      },
+      "requestSha256": "9bc5683d171e6c573d661746ac4989976601fe481732a16de47d1911c3a264c2",
+      "currentTsExpected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_DIGITAL_LINK_INVALID_URI",
+            "message": "GS1 Digital Link URI must be an absolute http or https URL",
+            "reason": "invalid-uri",
+            "expected": "absolute http or https URL"
+          }
+        ],
+        "warnings": []
+      },
+      "expected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_DIGITAL_LINK_UNSUPPORTED_HOST",
+            "message": "Unsupported host profile; use ASCII DNS, canonical dotted IPv4, or RFC IPv6 without credentials",
+            "reason": "unsupported-host",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": "ASCII DNS name, canonical dotted IPv4, or RFC IPv6",
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      }
+    },
+    {
+      "id": "builder-dot-path:linkCreate",
+      "category": "rejected-to-accepted-safe-dot-query",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "04912345678904"
+          },
+          {
+            "ai": "10",
+            "value": "."
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com"
+        }
+      },
+      "requestSha256": "8e46be959a762fec81a075f1e650552e1e236fe748110537a7470e62f0e52caa",
+      "currentTsExpected": {
+        "throws": {
+          "code": "INVALID_GS1",
+          "message": "GS1 Digital Link path values must not be dot segments; use pathAis: [] to place these values in the query"
+        }
+      },
+      "expected": "https://example.com/01/04912345678904?10=."
+    },
+    {
+      "id": "builder-parent-path:linkCreate",
+      "category": "rejected-to-accepted-safe-dot-query",
+      "request": {
+        "op": "linkCreate",
+        "elements": [
+          {
+            "ai": "01",
+            "value": "04912345678904"
+          },
+          {
+            "ai": "10",
+            "value": ".."
+          }
+        ],
+        "options": {
+          "baseUrl": "https://example.com"
+        }
+      },
+      "requestSha256": "18e7429111bb73b1b8327787f74bc62eee60917f579599e0eea8e4fcca976a51",
+      "currentTsExpected": {
+        "throws": {
+          "code": "INVALID_GS1",
+          "message": "GS1 Digital Link path values must not be dot segments; use pathAis: [] to place these values in the query"
+        }
+      },
+      "expected": "https://example.com/01/04912345678904?10=.."
+    }
+  ]
+}

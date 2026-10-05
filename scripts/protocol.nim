@@ -1,6 +1,7 @@
 ## Development-only JSON adapter. All encoding is performed by native SpecQR.
 import std/[json, math, strutils, base64, options]
 import specqr
+import ./gs1_fixture
 proc bad(message:string) {.noreturn.}=fail("INVALID_INPUT",message)
 proc field(r:JsonNode;key:string;fallback:JsonNode=newJNull()):JsonNode =
   if r.kind!=JObject:bad("Expected object")
@@ -107,6 +108,7 @@ proc runRequest*(r:JsonNode):JsonNode =
     let cmdNode=r.field("command",%"generate")
     let command=if cmdNode.kind==JNull:"generate" else:textValue(cmdNode)
     case command
+    of "gs1-fixture": return %*{"value":runGs1Fixture(r)}
     of "gf":
       var data:seq[uint8]
       for a in 0..255:

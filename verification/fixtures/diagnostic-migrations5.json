@@ -1,0 +1,529 @@
+{
+  "schemaVersion": 1,
+  "scope": "Five explicit diagnostic-order migrations implied by approved URL acceptance restoration. Expected diagnostics independently executed through existing native semantic witnesses; not copied from candidate outputs. Acceptance and residual168 case ID set unchanged.",
+  "baseResidualFixture": "native-intentional-deltas168.json",
+  "baseResidualFixtureSha256": "332e993479fcb898e04469230d77540412c7513c673e21e0511b0f7f19dc6055",
+  "nativeOracle": {
+    "repository": "https://github.com/SpecQR/SpecQR-Nim",
+    "commit": "4f9154664d35a24cecb30b75cfdba0a9f16ced3e",
+    "tree": "e4d34c4c501d09c4e2d12ad953522ff935ae43ea",
+    "source": "src/specqr/gs1.nim",
+    "sourceSha256": "9df6a11927f265108e4d01e3321a208e1bcd4f9c484ff6aad5f9b8bd42734fa3",
+    "toolchain": "Nim 2.2.12 C backend",
+    "oracleHarnessSha256": "afc339622062ed1b0e58f5b4b2b327e69a173e48fd1cb5a71c576c571ccd273c",
+    "oracleOutputSha256": "ce612ac36f99d1d4964e9266984e48b8adcc4d5610c710b19ba91cabfa368dae"
+  },
+  "currentTypeScript": {
+    "repository": "https://github.com/SpecQR/SpecQR",
+    "commit": "16efc6c0a8e397c9df3d051d20fce6c1eebdfad7",
+    "tree": "ca4c2360a7dc0950c1bfd1f76e44616bcd406023",
+    "toolchain": "Node.js v24.19.0",
+    "oracleHarness": "verification/gs1/current_ts_oracle.mjs",
+    "oracleHarnessSha256": "cf4b5b393a909bbae33cee250420d9997cff742fd1607c1746e91e6a4ff02b33",
+    "sourceHashes": {
+      "src/gs1/ai-dictionary.js": "c483742e13e98f08bc461b4223502be9542e7043bc02031af3bb31a3def93099",
+      "src/gs1/ai.js": "482f443c5b485173038ebea945a5c7d524efce87e2cd9c5595361494ceccea95",
+      "src/gs1/check-digit.js": "5a3fafa1ef032d5a2603c094f34563026d577b6b926b7ffefaef36fc00ec93ce",
+      "src/gs1/digital-link.js": "a4ea3059c7fa63fc5c099fa5bc1915e59cbfd8f103fe19120397787c49b5eb7a",
+      "src/gs1/element-string.js": "441beb66197dd872186314a619b3cf8a04ad9956fef70e618a03d0b7bfe835cd",
+      "src/gs1/index.js": "0b3d54b9dc1d1dd0343ba77b8e6c7e7e07bca96353fd42a5c98c8e0052947c8d",
+      "src/gs1/parser.js": "5572e92815a5f3c3bb7aad67fabcfd0b2aa34085d12c7baef0a1cee123bcf9ef",
+      "src/gs1/validation.js": "44e1321ab549f4d050816305b0a201e6d4396418dfe1c9d0de6675d6d6fc1368",
+      "src/gs1/validator.js": "3482cab601f09d9b7dde94198c0f886c843c7d7f4018541388cc388fc993d64a",
+      "src/gs1.js": "8caa34a2eb6acfb24d5c46f8559fbd0a96dc0109d69a1789fbe74203a2290833"
+    },
+    "rawOracleOutputSha256": "c6dfdc272f9daf1e289ecfde2f27b1c5752fb0647baab571ee80eeeb254b0988"
+  },
+  "witnessInputSha256": "c9f4cfd3d6882fa719c68e1655e56670924ecac6ba03ec4b04332beebd33cd3c",
+  "witnessNimOutputSha256": "1b35e289ae461195e0ca63ab3bf7c05df3efa4a87f2262bb7e0868d75f929516",
+  "witnessTsOutputSha256": "6bea1aac32b2819d5eddd0596374df20f8d737eee2a193239a9245726f78b109",
+  "caseCount": 5,
+  "cases": [
+    {
+      "caseId": 930,
+      "request": {
+        "op": "linkValidate",
+        "input": "https://example.com/01/04912345678904#",
+        "options": {
+          "primaryAi": "00"
+        }
+      },
+      "requestSha256": "b60576539a251d3ee0781a33b17ea3ad2a95c8fba3fef3dbe7bdb4bf941c298f",
+      "priorNativeExpected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_DIGITAL_LINK_FRAGMENT_NOT_ALLOWED",
+            "message": "GS1 Digital Link URI must not include a fragment",
+            "reason": "fragment-not-allowed",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": null,
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "expected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_INVALID_DIGITAL_LINK_PLACEMENT",
+            "message": "GS1 Digital Link path must include primary AI 00, 01, or 414",
+            "reason": "invalid-digital-link-placement",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": null,
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "rationale": "Once lexical/authority compatibility accepts the URL, the retained native primary-AI validation is the first remaining failure. This witness isolates identical GS1 path and primaryAi option under an already-supported canonical authority.",
+      "independentWitness": {
+        "request": {
+          "op": "linkValidate",
+          "input": "https://example.com/01/04912345678904",
+          "options": {
+            "primaryAi": "00"
+          }
+        },
+        "nimExpected": {
+          "ok": false,
+          "errors": [
+            {
+              "code": "GS1_INVALID_DIGITAL_LINK_PLACEMENT",
+              "message": "GS1 Digital Link path must include primary AI 00, 01, or 414",
+              "reason": "invalid-digital-link-placement",
+              "ai": null,
+              "value": null,
+              "key": null,
+              "offset": null,
+              "elementIndex": null,
+              "expected": null,
+              "count": null
+            }
+          ],
+          "warnings": [],
+          "result": null
+        },
+        "currentTsExpected": {
+          "ok": false,
+          "errors": [
+            {
+              "code": "GS1_INVALID_INPUT",
+              "message": "GS1 Digital Link path must include primary AI 00, 01, or 414",
+              "reason": "malformed-path",
+              "expected": "Digital Link path containing primary AI and AI/value pairs"
+            }
+          ],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "caseId": 1038,
+      "request": {
+        "op": "linkValidate",
+        "input": "https:example.com/01/04912345678904",
+        "options": {
+          "primaryAi": "00"
+        }
+      },
+      "requestSha256": "da82c5956cc7e018724c05638126987f81d08c6139f030bbed03ea55b83030d8",
+      "priorNativeExpected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_DIGITAL_LINK_INVALID_URI",
+            "message": "GS1 URI must be an absolute http or https URL",
+            "reason": "invalid-uri",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": null,
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "expected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_INVALID_DIGITAL_LINK_PLACEMENT",
+            "message": "GS1 Digital Link path must include primary AI 00, 01, or 414",
+            "reason": "invalid-digital-link-placement",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": null,
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "rationale": "Once lexical/authority compatibility accepts the URL, the retained native primary-AI validation is the first remaining failure. This witness isolates identical GS1 path and primaryAi option under an already-supported canonical authority.",
+      "independentWitness": {
+        "request": {
+          "op": "linkValidate",
+          "input": "https://example.com/01/04912345678904",
+          "options": {
+            "primaryAi": "00"
+          }
+        },
+        "nimExpected": {
+          "ok": false,
+          "errors": [
+            {
+              "code": "GS1_INVALID_DIGITAL_LINK_PLACEMENT",
+              "message": "GS1 Digital Link path must include primary AI 00, 01, or 414",
+              "reason": "invalid-digital-link-placement",
+              "ai": null,
+              "value": null,
+              "key": null,
+              "offset": null,
+              "elementIndex": null,
+              "expected": null,
+              "count": null
+            }
+          ],
+          "warnings": [],
+          "result": null
+        },
+        "currentTsExpected": {
+          "ok": false,
+          "errors": [
+            {
+              "code": "GS1_INVALID_INPUT",
+              "message": "GS1 Digital Link path must include primary AI 00, 01, or 414",
+              "reason": "malformed-path",
+              "expected": "Digital Link path containing primary AI and AI/value pairs"
+            }
+          ],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "caseId": 1056,
+      "request": {
+        "op": "linkValidate",
+        "input": "https://user:pass@EXAMPLE.com:443/stem/01/04912345678904",
+        "options": {
+          "primaryAi": "00"
+        }
+      },
+      "requestSha256": "fee9de5f67b7401c7a6c075045c7c91590c43422d05347a70d90c9e0d8f89841",
+      "priorNativeExpected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_DIGITAL_LINK_UNSUPPORTED_HOST",
+            "message": "Unsupported host profile; use ASCII DNS, canonical dotted IPv4, or RFC IPv6 without credentials",
+            "reason": "unsupported-host",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": "ASCII DNS name, canonical dotted IPv4, or RFC IPv6",
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "expected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_INVALID_DIGITAL_LINK_PLACEMENT",
+            "message": "GS1 Digital Link path must include primary AI 00, 01, or 414",
+            "reason": "invalid-digital-link-placement",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": null,
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "rationale": "Once lexical/authority compatibility accepts the URL, the retained native primary-AI validation is the first remaining failure. This witness isolates identical GS1 path and primaryAi option under an already-supported canonical authority.",
+      "independentWitness": {
+        "request": {
+          "op": "linkValidate",
+          "input": "https://example.com/01/04912345678904",
+          "options": {
+            "primaryAi": "00"
+          }
+        },
+        "nimExpected": {
+          "ok": false,
+          "errors": [
+            {
+              "code": "GS1_INVALID_DIGITAL_LINK_PLACEMENT",
+              "message": "GS1 Digital Link path must include primary AI 00, 01, or 414",
+              "reason": "invalid-digital-link-placement",
+              "ai": null,
+              "value": null,
+              "key": null,
+              "offset": null,
+              "elementIndex": null,
+              "expected": null,
+              "count": null
+            }
+          ],
+          "warnings": [],
+          "result": null
+        },
+        "currentTsExpected": {
+          "ok": false,
+          "errors": [
+            {
+              "code": "GS1_INVALID_INPUT",
+              "message": "GS1 Digital Link path must include primary AI 00, 01, or 414",
+              "reason": "malformed-path",
+              "expected": "Digital Link path containing primary AI and AI/value pairs"
+            }
+          ],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "caseId": 1269,
+      "request": {
+        "op": "linkValidate",
+        "input": "https://%FF.com/01/04912345678904"
+      },
+      "requestSha256": "0b5543d182352e8ba83e394ee1429c3234f1810e080146efa3f88ac1c5f84cac",
+      "priorNativeExpected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_DIGITAL_LINK_UNSUPPORTED_HOST",
+            "message": "Unsupported host profile; use ASCII DNS, canonical dotted IPv4, or RFC IPv6 without credentials",
+            "reason": "unsupported-host",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": "ASCII DNS name, canonical dotted IPv4, or RFC IPv6",
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "expected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_INVALID_PERCENT_ENCODING",
+            "message": "GS1 URI must use valid percent-encoding and UTF-8 without NUL",
+            "reason": "invalid-percent-encoding",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": null,
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "rationale": "ASCII percent-host support now routes host octets through the same retained strict percent/scalar-UTF8/NUL validator as existing query components. This witness independently establishes the existing native diagnostic for that exact invalid octet sequence.",
+      "independentWitness": {
+        "request": {
+          "op": "linkValidate",
+          "input": "https://example.com/01/04912345678904?encodingWitness=%FF"
+        },
+        "nimExpected": {
+          "ok": false,
+          "errors": [
+            {
+              "code": "GS1_INVALID_PERCENT_ENCODING",
+              "message": "GS1 URI must use valid percent-encoding and UTF-8 without NUL",
+              "reason": "invalid-percent-encoding",
+              "ai": null,
+              "value": null,
+              "key": null,
+              "offset": null,
+              "elementIndex": null,
+              "expected": null,
+              "count": null
+            }
+          ],
+          "warnings": [],
+          "result": null
+        },
+        "currentTsExpected": {
+          "ok": true,
+          "result": {
+            "elements": [
+              {
+                "ai": "01",
+                "value": "04912345678904"
+              }
+            ],
+            "primary": {
+              "ai": "01",
+              "value": "04912345678904"
+            },
+            "pathElements": [
+              {
+                "ai": "01",
+                "value": "04912345678904"
+              }
+            ],
+            "queryElements": [],
+            "unknownQuery": [
+              {
+                "key": "encodingWitness",
+                "value": "\ufffd"
+              }
+            ]
+          },
+          "warnings": [
+            {
+              "code": "GS1_DIGITAL_LINK_UNKNOWN_QUERY_PRESERVED",
+              "message": "GS1 Digital Link URI contains non-GS1 query parameters preserved in unknownQuery.",
+              "reason": "unknown-query-preserved",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "caseId": 1272,
+      "request": {
+        "op": "linkValidate",
+        "input": "https://%00.com/01/04912345678904"
+      },
+      "requestSha256": "3eef16a6c18874ba193296b8ca45037ea5a8994b7b9ea0a725118cbe5c418e7a",
+      "priorNativeExpected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_DIGITAL_LINK_UNSUPPORTED_HOST",
+            "message": "Unsupported host profile; use ASCII DNS, canonical dotted IPv4, or RFC IPv6 without credentials",
+            "reason": "unsupported-host",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": "ASCII DNS name, canonical dotted IPv4, or RFC IPv6",
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "expected": {
+        "ok": false,
+        "errors": [
+          {
+            "code": "GS1_INVALID_PERCENT_ENCODING",
+            "message": "GS1 URI must use valid percent-encoding and UTF-8 without NUL",
+            "reason": "invalid-percent-encoding",
+            "ai": null,
+            "value": null,
+            "key": null,
+            "offset": null,
+            "elementIndex": null,
+            "expected": null,
+            "count": null
+          }
+        ],
+        "warnings": [],
+        "result": null
+      },
+      "rationale": "ASCII percent-host support now routes host octets through the same retained strict percent/scalar-UTF8/NUL validator as existing query components. This witness independently establishes the existing native diagnostic for that exact invalid octet sequence.",
+      "independentWitness": {
+        "request": {
+          "op": "linkValidate",
+          "input": "https://example.com/01/04912345678904?encodingWitness=%00"
+        },
+        "nimExpected": {
+          "ok": false,
+          "errors": [
+            {
+              "code": "GS1_INVALID_PERCENT_ENCODING",
+              "message": "GS1 URI must use valid percent-encoding and UTF-8 without NUL",
+              "reason": "invalid-percent-encoding",
+              "ai": null,
+              "value": null,
+              "key": null,
+              "offset": null,
+              "elementIndex": null,
+              "expected": null,
+              "count": null
+            }
+          ],
+          "warnings": [],
+          "result": null
+        },
+        "currentTsExpected": {
+          "ok": true,
+          "result": {
+            "elements": [
+              {
+                "ai": "01",
+                "value": "04912345678904"
+              }
+            ],
+            "primary": {
+              "ai": "01",
+              "value": "04912345678904"
+            },
+            "pathElements": [
+              {
+                "ai": "01",
+                "value": "04912345678904"
+              }
+            ],
+            "queryElements": [],
+            "unknownQuery": [
+              {
+                "key": "encodingWitness",
+                "value": "\u0000"
+              }
+            ]
+          },
+          "warnings": [
+            {
+              "code": "GS1_DIGITAL_LINK_UNKNOWN_QUERY_PRESERVED",
+              "message": "GS1 Digital Link URI contains non-GS1 query parameters preserved in unknownQuery.",
+              "reason": "unknown-query-preserved",
+              "count": 1
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

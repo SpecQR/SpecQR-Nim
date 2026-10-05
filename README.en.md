@@ -26,10 +26,10 @@ Import using `--path:/path/to/SpecQR-Nim/src`, or install a local checkout with 
 
 Rendering defaults to eight pixels per module and four quiet-zone modules. Raster output is bounded at 2,048 pixels per edge. Text input uses strict shortest-form UTF-8; ECI labels without transcoding; binary bytes remain opaque. Kanji uses a pinned 6,953-scalar normative mapping. High-level FNC1 literals containing `%` use byte fallback (forced alphanumeric rejects); manual segments retain the caller's QR escape semantics.
 
-GS1 / Digital Link implement a documented subset, not GS1 certification or a remote URL safety check. Structured Append XOR is not authentication. Independent decoders differ in metadata and default-scale detection behavior; see the verification guide for the separate Java detector characterization.
+GS1 URL helpers restore harmless browser-compatible syntax (80 independently pinned positive targets), including credentials, numeric IPv4 aliases and canonical IPv6. Strict percent/UTF-8/NUL and payload-preservation checks remain; non-ASCII IDNA hosts are an explicit dependency-free scope limit. ASCII ACE labels are treated as reg-names without full IDNA validity guarantees; existing builder prefix cleanup also collapses repeated slashes. Ordinary QR encoding is unchanged. GS1 / Digital Link implement a documented subset, not GS1 certification or a remote URL safety check. Structured Append XOR is not authentication. Independent decoders differ in metadata and default-scale detection behavior; see the verification guide for the separate Java detector characterization.
 
 ## Checks
 
-`python3 scripts/verify_native.py --nim /absolute/path/to/nim --expect-version 2.2.12 --output /tmp/specqr-nim-validation` runs the compiler, four build/memory lanes, 60 native test groups, all 10,186 pinned reference cases, malformed-input checks, CLI checks, and a fresh offline Nimble consumer. Test-only independent decoder dependencies are separate from runtime code.
+`python3 scripts/verify_native.py --nim /absolute/path/to/nim --expect-version 2.2.12 --output /tmp/specqr-nim-validation` runs the compiler, four build/memory lanes, 60 native test groups, all 10,186 pinned reference cases, all 1,411 GS1 requests, malformed-input checks, CLI checks, and a fresh offline Nimble consumer. Test-only independent decoder dependencies are separate from runtime code.
 
 MIT license. Fixture provenance and hashes are retained in verification/fixtures/manifest.json.

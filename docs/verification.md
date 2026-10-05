@@ -30,7 +30,7 @@ python3 /tmp/SpecQR-Nim-source/scripts/verify_native.py \
 
 実装を更新した開発者だけが `prepare_ci.py manifest` で manifest を更新し、再度全ゲートを実行してください。配布物を消費する側は verify を使います。出力先はソース外の新規ディレクトリです。
 
-各 lane は 60 の native test groups、10,186 corpus requests、301 malformed-input checks、31 CLI processes を実行します。テストバイナリは exit 0 と stderr なしが必要です。JSON-line bridge は入力 EOF で終了し、余分な stdout、遅れて出る stderr、非 0 exit、タイムアウトを合格として扱いません。
+各 lane は 60 の native test groups、10,186 corpus requests、301 malformed-input checks、1,411 GS1 requests、31 CLI processes を実行します。テストバイナリは exit 0 と stderr なしが必要です。JSON-line bridge は入力 EOF で終了し、余分な stdout、遅れて出る stderr、非 0 exit、タイムアウトを合格として扱いません。
 
 ローカル Nimble consumer は新しい package copy、リモートを持たないローカル Git snapshot（Nimble 0.16.1 の tracked-file 検証用）、新しい HOME/NIMBLE_DIR、空の packages_official.json、`--offline` を使います。インストール後の全 Nim source bytes を元ソースと比較し、別ディレクトリで import / SVG / PNG / plan のプログラムをコンパイル・実行します。インターネット上の Nimble レジストリー登録とは別です。
 
@@ -51,11 +51,11 @@ Java の scale 8 での検出は `characterize_java_default_scale.py` で独立�
 
 `verify_render_decoders.py` は SVG を librsvg で独立に rasterize し、PNG と RGBA を全ピクセル比較します。data URL の round-trip も確認します。
 
-`verify_shared_regressions.py` はリテラル `%` の 102 vectors、manual semantics、Digital Link dot-only data、query、strict numeric-host aliases、finite DPI、ECC を検証します。各 case の容量期待値を独立に計算し、あらゆる DATA_TOO_LONG を一括で許可しません。
+`verify_shared_regressions.py` はリテラル `%` の 102 vectors、manual semantics、Digital Link dot-only data、query、80 個の TypeScript-positive 復元対象、49 GS1 操作（数値ホスト別表記の 18 positive と `example.0x` の 3 rejection を含む）、finite DPI、ECC を検証します。各 case の容量期待値を独立に計算し、あらゆる DATA_TOO_LONG を一括で許可しません。
 
 ## ハーネス自身の陰性対照
 
-`test_harness.py` は 24 tests で、ソース改変、extra stdout、late stderr、nonzero exit、EOF 未到達、timeout、不正 JSON、誤った fixture outcome、auxiliary decoder/rasterizer の不正出力などが実際に失敗することを確認します。これらは実 Python subprocess のハーネス試験で、Nim 実行や decoder 実行の代用ではありません。
+`test_harness.py` は 30 tests で、ソース改変、extra stdout、late stderr、nonzero exit、EOF 未到達、timeout、不正 JSON、誤った fixture outcome、auxiliary decoder/rasterizer の不正出力などが実際に失敗することを確認します。これらは実 Python subprocess のハーネス試験で、Nim 実行や decoder 実行の代用ではありません。
 
 ## 処理系の出所
 
@@ -67,3 +67,13 @@ Java の scale 8 での検出は `characterize_java_default_scale.py` で独立�
 この記録は暗号学的署名・第三者認証を意味しません。
 
 Sources: [Nim install](https://nim-lang.org/install.html), [Nim memory management](https://nim-lang.org/docs/mm.html), [Nim manual](https://nim-lang.org/docs/manual.html), [Nim 2.2.12 announcement](https://nim-lang.org/blog/2026/09/08/nim-2212.html).
+
+## GS1 互換性復元の証拠
+
+元の `gs1-upstream.json` は変更せず、現行 TypeScript の独立実行を `current-ts-gs1-1411.json.gz` に固定しています。`approved-restorations80.json` と `native-intentional-deltas168.json` は request 本文と SHA-256、原実装の commit / source hash に結びつきます。`diagnostic-migrations5.json` の 5 診断移行は変更前 Nim に与えた意味的に同等の witness で確認し、候補出力から期待値を生成しません。
+
+`verify_gs1.py` は各 4 lanes で 1,411 件、1,243 TypeScript 一致、168 明示差分、80 復元の正確な件数を要求します。任意の native error を正例の代わりに通しません。元の 102 FNC1 percent vectors は 44 成功、34 forced-alpha rejection、24 容量 rejection、4 manual vectors と計 48 実 PNG 復号のゲートを保持します。
+
+旧単体テストの全文は `verification/gs1/legacy_test_gs1.nim` に保存し、変更した拒否 assertion の入力と移動先は `verification/gs1/legacy-unit-migrations.md` へ明記しました。元の 10,186 fixtures と共有データは改変しません。適用範囲と受理拡張は [GS1 ガイド](gs1.md) を参照してください。
+
+追加の 394 URL serialization 正例は別の固定 TypeScript 実行から生成し、各 lane で exact comparison を要求します。ASCII path / base path / userinfo / query、IPv4 境界、IPv6 ゼロ列の同長選択を含みます。原 1,411 件の件数には混ぜません。この追加検証で見つかった raw caret (`^`) の接頭パスを `%5E` へ直列化する修正を含みます。

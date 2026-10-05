@@ -48,7 +48,7 @@ doAssert estimate.ok
 - テキストは最短形式の Unicode scalar UTF-8。壊れた UTF-8 は拒否し、raw byte 配列はそのまま符号化します。
 - ECI はラベルです。文字コード変換はしません。Kanji は同梱した 6,953 scalar の QR/CP932 対応表を利用します。
 - 高水準 FNC1 でリテラル `%` を含む auto 入力は byte に切り替えます。明示 alphanumeric は拒否します。手動 FNC1 の alphanumeric は利用者が QR の `%` / `%%` 表現を用意します。
-- GS1 の AI、Digital Link の URI 構文は限定されたプロファイルです。全 GS1 仕様の適合認証、リモート URL の到達性／安全性検査を意味しません。
+- GS1 の AI、Digital Link の URI 構文は限定されたプロファイルです。空 fragment／query、userinfo、ASCII reg-name、数値 IPv4、IPv6 正規化などの互換性を復元し、通常 QR の機能と両立します。全 GS1 仕様の適合認証、リモート URL の到達性／安全性検査を意味しません。
 - Structured Append の XOR は破損確認の補助であり、暗号学的な真正性確認ではありません。デコーダーごとに SA / FNC1 第 2 位置の公開情報が異なります。
 - 通常の入力は 1,000,000 単位まで。単一シンボルの容量は QR 仕様が優先されます。ラスターは 4,194,304 pixels、辺 2,048 pixels までです。詳細はガイドを参照してください。
 
@@ -60,6 +60,6 @@ python3 scripts/verify_native.py --nim /absolute/path/to/nim \
   --expect-version 2.2.12 --output /tmp/specqr-nim-validation
 ```
 
-この検証はコンパイラーを実際に実行し、4 build/memory lanes、60 ネイティブテスト群、10,186 固定期待値、CLI、ローカルのオフライン Nimble consumer を確認します。外部デコーダーの検証依存はテスト専用です。実施結果と未検証範囲は [検証ガイド](docs/verification.md) を確認してください。
+この検証はコンパイラーを実際に実行し、4 build/memory lanes、60 ネイティブテスト群、10,186 固定期待値、1,411 GS1 入力と 80 URL 互換性復元、CLI、ローカルのオフライン Nimble consumer を確認します。外部デコーダーの検証依存はテスト専用です。実施結果と未検証範囲は [検証ガイド](docs/verification.md) を確認してください。
 
 MIT License。QR エンコーダーの実装は SpecQR プロジェクト自身のものです。Nim 移植の検証データの出所・固定ハッシュは verification/fixtures/manifest.json にあります。
