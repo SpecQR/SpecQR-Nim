@@ -2,7 +2,7 @@
 
 ## 検証対象と非対象
 
-公開前ゲートは Linux x86-64 の実処理系 Nim 2.2.0 / 2.2.12、C バックエンド、debug / release × ARC / ORC の計 8 lanes です。Windows、macOS、32-bit、JavaScript バックエンドは未検証です。OS 固有分岐は実装していません。標準ライブラリからの通常の C ランタイム利用は Nim の実行モデルに含まれます。
+公開前ゲートは Linux x86-64 の実処理系 Nim 2.2.0 / 2.2.12、C バックエンド、debug / release × ARC / ORC の計 8 lanes です。Windows、macOS、32 bit、JavaScript バックエンドは未検証です。OS 固有分岐は実装していません。標準ライブラリからの通常の C ランタイム利用は Nim の実行モデルに含まれます。
 
 「チェックを書くこと」と「そのチェックの成功」は別です。各実行の report.json は status、正確なコンパイラー／実行ファイルのハッシュ、実行 OS、コマンド、exit status、stdout/stderr のハッシュ、ソース不変性を記録します。途中失敗は failed のまま保存します。最終の公開 commit と GitHub Actions 結果は、その公開時の実行に対応します。
 
@@ -66,7 +66,7 @@ Java の scale 8 での検出は `characterize_java_default_scale.py` で独立�
 
 この記録は暗号学的署名・第三者認証を意味しません。
 
-Sources: [Nim install](https://nim-lang.org/install.html), [Nim memory management](https://nim-lang.org/docs/mm.html), [Nim manual](https://nim-lang.org/docs/manual.html), [Nim 2.2.12 announcement](https://nim-lang.org/blog/2026/09/08/nim-2212.html).
+出典: [Nim install](https://nim-lang.org/install.html)、[Nim memory management](https://nim-lang.org/docs/mm.html)、[Nim manual](https://nim-lang.org/docs/manual.html)、[Nim 2.2.12 announcement](https://nim-lang.org/blog/2026/09/08/nim-2212.html)。
 
 ## GS1 互換性復元の証拠
 

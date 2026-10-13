@@ -1,5 +1,7 @@
 # SpecQR Nim
 
+A from-scratch QR Code Model 2 encoder using only the Nim standard library at runtime.
+
 Nim 標準ライブラリだけで動作する、フルスクラッチの QR Code Model 2 エンコーダーです。QR ライブラリ、外部画像コーデック、FFI の QR ラッパー、ネットワークサービスを実行時に使用しません。
 
 [English](README.en.md) · [日本語ガイド](docs/guide.md) · [GS1 / Digital Link](docs/gs1.md) · [検証方法](docs/verification.md)
@@ -16,7 +18,7 @@ Nim 標準ライブラリだけで動作する、フルスクラッチの QR Cod
 
 ## 動作条件
 
-Nim 2.2.0 以降と C コンパイラーが必要です。検証対象は Linux x86-64、Nim 2.2.0 / 2.2.12、C バックエンド、debug / release と ARC / ORC です。ソースは OS 固有の QR 実装を使いませんが、Windows・macOS・32-bit・JavaScript バックエンドは検証済みとはしていません。
+Nim 2.2.0 以降と C コンパイラーが必要です。検証対象は Linux x86-64、Nim 2.2.0 / 2.2.12、C バックエンド、debug / release と ARC / ORC です。ソースは OS 固有の QR 実装を使いませんが、Windows・macOS・32 bit・JavaScript バックエンドは検証済みとはしていません。
 
 Nim 本体は [公式インストール案内](https://nim-lang.org/install_unix.html) から導入できます。C コンパイラーは Nim の通常のビルド要件です。実行時のサードパーティ依存はありません。
 
